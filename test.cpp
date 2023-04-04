@@ -10,7 +10,7 @@ int main()
     std::cout << "! Starting program..." << std::endl;
 
     // Open Window
-    sf::RenderWindow window(sf::VideoMode(1000, 1000), "Game");
+    sf::RenderWindow window(sf::VideoMode(1280, 1024), "Game");
 
 
     // Set up texture and sprite
@@ -19,6 +19,16 @@ int main()
     sf::Sprite wizard(wizard_texture);
     wizard.setPosition(300, 500);
     wizard.setOrigin(38, 132);
+
+    // Set up background
+    sf::Texture spaceBGTexture;
+    // TODO: Set repeating texture
+    spaceBGTexture.setRepeated(true);   
+    spaceBGTexture.loadFromFile("./assets/sprites/SpaceBG.png");
+    sf::Sprite spaceBackground(spaceBGTexture);
+    spaceBackground.setTextureRect();  // TODO: THIS
+    spaceBackground.setScale(3, 3);
+    window.draw(spaceBackground);
 
 
     // Set up text
@@ -95,6 +105,7 @@ int main()
         window.clear();
         // ******** Draw the frame here ********
         // **---------------------------------**
+        window.draw(spaceBackground);
         window.draw(wizard);
         window.draw(text);
 
