@@ -4,5 +4,8 @@
 
 all: a.out
 
-a.out: test.cpp
-	g++ $< -LSFML -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+a.out: test.cpp dragon.cpp player.cpp dragonFire.cpp
+	g++ $^ -LSFML -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+clean:
+	rm *.o
