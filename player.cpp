@@ -1,20 +1,21 @@
+/* player.cpp
+ * 
+ * Implements the player class.
+ */
 #include "player.h"
 
-#include <iostream>
 
-Player::Player() {
-    // Set up texture and sprite
-    texture.loadFromFile("./assets/sprites/WizardSprite.png");
-    sprite.setTexture(texture, true);
-    sprite.setPosition(300, 1000);
+Player::Player(sf::RenderWindow * window, sf::Texture * texture): Entity(window, texture, 300, 1000) {
+    // Set the origin to the middle of the sprite's feet
     sprite.setOrigin(38, 132);
 
+    // Set initial score and health
     score = 10;
     health = 10;
     frameCounter = 0;
 }
 
-void Player::MovePlayer(float x, float y) {
+void Player::Move(float x, float y) {
 
     // Flip player to face the direction they are moving
     if (x > 0) {
@@ -24,7 +25,7 @@ void Player::MovePlayer(float x, float y) {
     }
 
     // Move player
-    sprite.move(x, y);
+    Entity::Move(x, y);
 }
 
 int Player::GetScore() {
@@ -34,6 +35,7 @@ int Player::GetScore() {
 void Player::FrameUpdate() {
     frameCounter++;
 
+    // Every 60 frames, increase the score by 1
     if (frameCounter >= 60) {
         this->score++;
         frameCounter = 0;

@@ -8,18 +8,20 @@
 #include "player.h"
 
 
+
 int main()
 {
+    // ****** Variables to configure the game ******* //
     float movementSpeed = 10;
+    float fps = 60;
+
+    // ********************************************** //
     std::cout << "! Starting program..." << std::endl;
 
     // Open Window
     sf::RenderWindow window(sf::VideoMode(1280, 1024), "Game");
 
 
-    // Set up Player
-    Player wizard = Player();
-    std::cout << "Starting score: " << wizard.GetScore() << std::endl;
 
     // Set up background
     sf::Texture spaceBGTexture;
@@ -49,25 +51,29 @@ int main()
     }
     // music.play();
 
-    // Create dragon
-    Dragon enemy1 = Dragon();
-
-
-
+    // Set up Player
+    sf::Texture playerTexture;
+    playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
+    Player wizard = Player(&window, &playerTexture);
+    std::cout << "Starting score: " << wizard.GetScore() << std::endl;
     bool movingLeft = false;
     bool movingRight = false;
 
+    // Create dragon
+    sf::Texture dragonTexture, fireTexture;
+    dragonTexture.loadFromFile("./assets/sprites/0001.png");
+    fireTexture.loadFromFile("./assets/sprites/dragon-fire.png");
+    Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture);
 
-    float fps = 60;
 
+
+
+    
+    // Objects for keeping track of time
     float timeBtwnFrames = 1.0 / fps;
     sf::Clock frameClock;
     sf::Event event;
-    
-    std::vector<DragonFire> fires;
-
     int frameCount = 0;
-
 
     // Keep window open
     while (window.isOpen())
@@ -106,26 +112,22 @@ int main()
 
             }   // Input has been handled
 
-
-
-
-
             // Move characters
             if (movingLeft && !movingRight) {
-                wizard.MovePlayer(-movementSpeed, 0);
+                wizard.Move(-movementSpeed, 0);
             } else if (movingRight && !movingLeft) {
-                wizard.MovePlayer(movementSpeed, 0);
+                wizard.Move(movementSpeed, 0);
             }
 
             // Move the dragon and fire
-            enemy1.MoveRandomly();
+            dragon.Move();
 
 
             // Update the game states
             wizard.FrameUpdate();
 
-            // Show the score
         
+            // Show the score
             text.setString("Score: " + std::to_string(wizard.GetScore()));
             
 
@@ -134,15 +136,9 @@ int main()
             // ******** Draw the frame here ********
             // **---------------------------------**
             window.draw(spaceBackground);
-            window.draw(wizard.sprite);
             window.draw(text);
-            window.draw(enemy1.sprite);
-
-            fires = enemy1.GetFires();
-            for (int i = 0; i < fires.size(); i++) {
-                window.draw(fires[i].sprite);
-            }
-
+            wizard.Draw();
+            dragon.Draw();
             // **---------------------------------**
             // *************************************
             window.display();

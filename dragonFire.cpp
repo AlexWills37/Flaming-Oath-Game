@@ -1,16 +1,28 @@
+/* dragonFire.cpp
+ * 
+ * Implementation of the DragonFire class.
+ */
 #include "dragon.h"
 
-DragonFire::DragonFire(sf::Vector2f startingPos) {
-    texture.loadFromFile("./assets/sprites/dragon-fire.png");
-    sprite.setTexture(texture, true);
-    sprite.setPosition(startingPos);
-    offScreen = false;
+/*
+ * Creates a DragonFire object.
+ */
+DragonFire::DragonFire(sf::RenderWindow * window, sf::Texture * texture)
+: Entity(window, texture) {
+    // Start all fires off screen
+    this->offScreen = true;
+}
+
+
+DragonFire::DragonFire()
+{
+    this->offScreen = true;
 }
 
 void DragonFire::MoveDown()
 {
-    sprite.move(0, -5);
-    if (sprite.getPosition().y < 0) {
+    sprite.move(0, 5);
+    if (sprite.getPosition().y > this->window->getSize().y) {
         offScreen = true;
     }
 }

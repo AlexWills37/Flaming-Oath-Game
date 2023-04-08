@@ -1,38 +1,73 @@
+/* dragon.h
+ *
+ * Defines the Dragon and the DragonFire classes.
+ */
 #ifndef _DRAGON_H
 #define _DRAGON_H
 
 #include <SFML/Graphics.hpp>
-#include <vector>
+#include "entity.h"
 
-
-
-class DragonFire {
+/*
+ * DragonFire represents the fire that a dragon breaths to attack the player.
+ */
+class DragonFire: private Entity {  // Since this is private, only DragonFire and the friend class Dragon can call the entity methods
+    friend class Dragon; // Allow Dragon class to access the DragonFire's private methods/fields (such as .Draw())
     public:
-        DragonFire(sf::Vector2f startingPos);
-
+        /*
+         * Constructor for DragonFire.
+         * @param window - a pointer to the window to draw to
+         * @param startingPos - the initial position of the fire
+         */
+        DragonFire(sf::RenderWindow * window, sf::Texture * texture);
+        /*
+         * Default constructor. Initializes offScreen to true.
+         */
+        DragonFire();
+        
+        /*
+         * Moves the fire towards the ground.
+         */
         void MoveDown();
-        sf::Sprite sprite;
+
+
+    protected:
+
     private:
-        sf::Texture texture;
-        bool offScreen;
+        bool offScreen; // If this is true, the sprite is off screen and we can re-use it
+
 };
 
-class Dragon {
+/*
+ * Dragon is an enemy that attacks the player.
+ */
+class Dragon: public Entity {
     public:
-        Dragon();
 
-        void MoveRandomly();
+        /*
+         * Constructor
+         * @param window - the window to draw the dragon to
+         */
+        Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Texture * fireTexture);
 
-        std::vector<DragonFire> GetFires();
+        /*
+         * Moves the dragon randomly.
+         */
+        void Move();
 
+        /*
+         * Create a DragonFire and send it towards the player.
+         */
         void SpitFire();
 
-        sf::Sprite sprite;
+        /*
+         * Draws the dragon, and any on-screen fire, to the window.
+         */
+        void Draw();
 
     private:
-        // Private variables
-        sf::Texture texture;
-        std::vector<DragonFire> fires;
+        static const int maxFires = 5;  // How many fires can be on screen at once      
+        DragonFire fires[maxFires];  // A list of the DragonFire objects that belong to this dragon.
 
 };
 #endif
