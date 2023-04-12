@@ -15,7 +15,9 @@
  * This way, you don't need to worry about setting the window. You could also pass in starting coordinates here,
  * like: Entity(window, x, y) {}
  * 
- * 
+ * @author Alex Wills
+ * @author Jhonder Abreus
+ * @date April 7, 2023
  */
 #ifndef _ENTITY_H
 #define _ENTITY_H
@@ -42,9 +44,16 @@ class Entity {
         void Move(float deltaX, float deltaY);
 
         /*
+         * Update the sprite's state
+         */
+        void Update();
+
+        /*
          * Draw this entity's sprite(s) to the screen.
          */
         void Draw();
+
+        sf::FloatRect getGlobalBounds();
 
     protected:
         // These variables can be accessed by children classes

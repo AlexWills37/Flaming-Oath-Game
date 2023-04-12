@@ -1,12 +1,17 @@
 /* player.h
  *
  * Defines the Player's character that they control.
+ * 
+ * @author Alex Wills
+ * @author Jhonder Abreus
+ * @date April 7, 2023
  */
 #ifndef _PLAYER_H
 #define _PLAYER_H
 
 #include <SFML/Graphics.hpp>
 #include "entity.h"
+#include "dragon.h"
 
 class Player: public Entity {
 
@@ -31,6 +36,12 @@ class Player: public Entity {
          * Call this method every frame.
          */
         void FrameUpdate();
+
+        int GetHealth();
+
+        void ChangeHealth(int change);
+
+        void DecreaseScore(int change);
 
     private:
         int frameCounter;   // A counter to increase the player's score over time

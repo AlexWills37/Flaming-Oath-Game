@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/mnt/d/College Sem6/GameDev/Fantasy-Game-Project",
+            "binaryPath": "/mnt/d/College Sem6/GameDev/Fantasy-Game-Project/a.out",
+            "binaryArgs": []
+        }
+    ]
+}

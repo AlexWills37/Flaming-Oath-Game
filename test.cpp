@@ -1,3 +1,13 @@
+/* test.cpp
+ *
+ * The main source file for our game!
+ * 
+ * Music credit to https://patrickdearteaga.com
+ * 
+ * @author Jhonder Abreus
+ * @author Alex Wills
+ * @date April 11, 2023 
+ */
 #include <SFML/Graphics.hpp>
 #include<iostream>
 #include<SFML/Audio.hpp>
@@ -25,12 +35,11 @@ int main()
 
     // Set up background
     sf::Texture spaceBGTexture;
-    // TODO: Set repeating texture
     spaceBGTexture.setRepeated(true);   
     spaceBGTexture.loadFromFile("./assets/sprites/SpaceBG.png");
-    sf::Sprite spaceBackground(spaceBGTexture);
-    // spaceBackground.setTextureRect();  // TODO: THIS
-    spaceBackground.setScale(3, 3);
+    sf::Sprite spaceBackground;
+    spaceBackground.setTextureRect(sf::IntRect(0, 0, 1280 * 2, 1024));
+    spaceBackground.setTexture(spaceBGTexture);
     window.draw(spaceBackground);
 
 
@@ -46,10 +55,10 @@ int main()
 
     // Load music
     sf::Music music;
-    if( !music.openFromFile("./assets/music/hollow_knight.ogg")){
+    if( !music.openFromFile("./assets/music/Goliath's Foe.ogg")){
         std::cout<<"ERROR"<<std::endl;
     }
-    // music.play();
+    music.play();
 
     // Set up Player
     sf::Texture playerTexture;
@@ -126,10 +135,23 @@ int main()
             // Update the game states
             wizard.FrameUpdate();
 
+
+            // Check collisions
+            dragon.CheckCollision(&wizard);
+
         
             // Show the score
-            text.setString("Score: " + std::to_string(wizard.GetScore()));
+            text.setString("Health: " + std::to_string(wizard.GetHealth()));
             
+
+            // Move the background
+            sf::Vector2f pos = spaceBackground.getPosition();
+            pos.x -= 5;
+            // Once the upper left corner is 1 Window to the left of the screen, move it back
+            if (pos.x <= -float(window.getSize().x)) {
+                pos.x += window.getSize().x;
+            }
+            spaceBackground.setPosition(pos);
 
             // Render the frame
             window.clear();
@@ -145,6 +167,12 @@ int main()
 
             // Reset clock for next frame
             frameClock.restart();
+
+            // See if the game is over
+            if (wizard.GetHealth() <= 0)
+            {
+                window.close();
+            }
         }
 
         

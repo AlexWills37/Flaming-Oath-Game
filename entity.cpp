@@ -1,6 +1,9 @@
 /* entity.cpp
  *
  * Implementation of some functions that are common to all entities (objects with sprites to render)
+ * 
+ * @author Alex Wills
+ * @author Jhonder Abreus
  */
 #include "entity.h"
 
@@ -44,16 +47,31 @@ Entity::Entity()
 void Entity::Move(float deltaX, float deltaY)
 {
     // Move the sprite's vector
-    sf::Vector2f position = this->sprite.getPosition();
-    position += sf::Vector2f(deltaX, deltaY);
+    // sf::Vector2f position = this->sprite.getPosition();
+    // position += sf::Vector2f(deltaX, deltaY);
+    // this->sprite.setPosition(position);
+    this->sprite.move(deltaX, deltaY);
 
     // Make sure the sprite is in bounds
     sf::Vector2u windowSize = this->window->getSize();
-    position.x = std::clamp(position.x, float(0), float(windowSize.x));
-    position.y = std::clamp(position.y, float(0), float(windowSize.y));
+    sf::Vector2f position = sprite.getPosition();
+    sf::FloatRect bounds = sprite.getGlobalBounds();
+    if (bounds.left < 0) {
+        position.x -= bounds.left;
+    }
+    else if (bounds.left + bounds.width > windowSize.x){
+        position.x -= bounds.left + bounds.width - windowSize.x;
+    }
+    if (bounds.top < 0) {
+        position.y -= bounds.top;
+    }
+    else if (bounds.top + bounds.height > windowSize.y){
+        position.y -= bounds.top + bounds.height - windowSize.y;
+    }
 
-    // Update the position
-    this->sprite.setPosition(position);
+    sprite.setPosition(position);
+
+
 }
 
 /*
@@ -62,4 +80,10 @@ void Entity::Move(float deltaX, float deltaY)
 void Entity::Draw()
 {
     window->draw(sprite);
+}
+
+
+sf::FloatRect Entity::getGlobalBounds()
+{
+    return this->sprite.getGlobalBounds();
 }

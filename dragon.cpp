@@ -1,6 +1,9 @@
 /* dragon.cpp
  *
  * Implementations for the Dragon class.
+ * 
+ * @author Alex Wills
+ * @date April 7, 2023
  */
 #include "dragon.h"
 #include<cstdlib>
@@ -21,6 +24,8 @@ Dragon::Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Textu
     {
         this->fires[i] = DragonFire(this->window, fireTexture);
     }   
+
+    movementCounter = 0;
 }
 
 /*
@@ -28,29 +33,52 @@ Dragon::Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Textu
  */
 void Dragon::Move()
 {
-    // Get a random number
-    int random = rand() % 5;
-
-    switch(random)
+    // Move based on current action    
+    switch (currentMovement)
     {
-        // Move left
-        case 0:
-            Entity::Move(-50, 0);
+        case Movement::RIGHT:
+            Entity::Move(7, 0);
+            movementCounter++;
             break;
+        case Movement::LEFT:
+            Entity::Move(-7, 0);
+            movementCounter++;
+            break;
+        case Movement::NONE:
 
-        // Move right
-        case 1:
-            Entity::Move(50, 0);
-            break;
+            movementCounter++;
 
-        default:
             break;
+        default: 
+            break;
+        
     }
-    
+
+    // After acting for 30 frames, choose a new action to take
+    if (movementCounter > 30)
+    {
+        int random = rand() % 3;
+        switch (random)
+        {
+            case 0:
+                currentMovement = Movement::RIGHT;
+                break;
+            case 1:
+                currentMovement = Movement::LEFT;
+                break;
+            case 2:
+                currentMovement = Movement::NONE;
+                break;
+            default:
+                break;
+        }
+
+        movementCounter = 0;
+    }
 
 
     // Randomly spit fire
-    random = rand() % 60;
+    int random = rand() % 60;
     switch (random) 
     {
         // Spit fire!
@@ -112,4 +140,27 @@ void Dragon::Draw()
     
     // Draw the dragon last, so that it is on top of any fire
     Entity::Draw();
+}
+
+
+/*
+ * Detect collision with the player and damage the player if they are hit.
+ * Specifically checks for collision with the DragonFire objects that are on-screen
+ */
+bool Dragon::CheckCollision(Player * player)
+{
+    bool hit = false;
+
+    for (int i = 0; i < this->maxFires; i++)
+    {
+        // Detect a collision
+        if (!(this->fires[i].offScreen) && this->fires[i].getGlobalBounds().intersects(player->getGlobalBounds()))
+        {
+            hit = true;
+            this->fires[i].offScreen = true;
+            player->ChangeHealth(-1);
+        }
+    }
+
+    return hit;
 }

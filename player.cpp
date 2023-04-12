@@ -1,6 +1,10 @@
 /* player.cpp
  * 
  * Implements the player class.
+ * 
+ * @author Alex Wills
+ * @author Jhonder Abreus
+ * @date April 7, 2023
  */
 #include "player.h"
 
@@ -40,4 +44,20 @@ void Player::FrameUpdate() {
         this->score++;
         frameCounter = 0;
     }
+
+}
+
+void Player::DecreaseScore(int change)
+{
+    this->score -= change;
+}
+
+int Player::GetHealth()
+{
+    return this->health;
+}
+
+void Player::ChangeHealth(int change)
+{
+    this->health += change;
 }
