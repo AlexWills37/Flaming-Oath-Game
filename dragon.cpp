@@ -7,6 +7,7 @@
  */
 #include "dragon.h"
 #include<cstdlib>
+#include <iostream>
 
 /*
  * Creates a Dragon.
@@ -25,6 +26,7 @@ Dragon::Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Textu
         this->fires[i] = DragonFire(this->window, fireTexture);
     }   
 
+    currentMovement = Movement::NONE;
     movementCounter = 0;
 }
 
@@ -58,6 +60,7 @@ void Dragon::Move()
     if (movementCounter > 30)
     {
         int random = rand() % 3;
+        std::cout<< random<< std::endl;
         switch (random)
         {
             case 0:
