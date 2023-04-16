@@ -5,5 +5,9 @@
             "binaryPath": "/mnt/d/College Sem6/GameDev/Fantasy-Game-Project/a.out",
             "binaryArgs": []
         }
-    ]
+    ],
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "map": "cpp"
+    }
 }

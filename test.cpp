@@ -58,7 +58,17 @@ int main()
     if( !music.openFromFile("./assets/music/Goliath's Foe.ogg")){
         std::cout<<"ERROR"<<std::endl;
     }
-    music.play();
+    //music.play();
+    sf::SoundBuffer firesou;
+    
+    if (!firesou.loadFromFile("./assets/music/fre spit.wav"))
+    {
+        std::cout<< "ERROR" << std::endl;
+    }
+
+    sf::Sound fsound;
+    fsound.setBuffer(firesou);
+    //fsound.play();
 
     // Set up Player
     sf::Texture playerTexture;
@@ -130,7 +140,7 @@ int main()
 
             // Move the dragon and fire
             dragon.Move();
-
+            
 
             // Update the game states
             wizard.FrameUpdate();

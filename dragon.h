@@ -9,6 +9,7 @@
 #define _DRAGON_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "entity.h"
 #include "player.h"
 
@@ -28,6 +29,7 @@ class DragonFire: private Entity {  // Since this is private, only DragonFire an
          * Default constructor. Initializes offScreen to true.
          */
         DragonFire();
+        
         
         /*
          * Moves the fire towards the ground.
@@ -72,6 +74,7 @@ class Dragon: public Entity {
          * Create a DragonFire and send it towards the player.
          */
         void SpitFire();
+
 
         /*
          * Draws the dragon, and any on-screen fire, to the window.
