@@ -1,4 +1,5 @@
 
 # output files
 *.out
+*.o
 hollow_knight.ogg

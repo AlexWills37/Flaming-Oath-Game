@@ -47,6 +47,7 @@ class Player: public Entity {
         int frameCounter;   // A counter to increase the player's score over time
         int score;          // The player's score
         int health;         // The player's health
+        float speed;
 
 };
 

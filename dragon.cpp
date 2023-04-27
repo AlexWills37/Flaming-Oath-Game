@@ -60,7 +60,6 @@ void Dragon::Move()
     if (movementCounter > 30)
     {
         int random = rand() % 3;
-        std::cout<< random<< std::endl;
         switch (random)
         {
             case 0:

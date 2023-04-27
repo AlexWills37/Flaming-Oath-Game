@@ -7,6 +7,7 @@
  * @date April 7, 2023
  */
 #include "player.h"
+#include "Time.h"
 
 
 Player::Player(sf::RenderWindow * window, sf::Texture * texture): Entity(window, texture, 300, 1000) {
@@ -15,8 +16,9 @@ Player::Player(sf::RenderWindow * window, sf::Texture * texture): Entity(window,
 
     // Set initial score and health
     score = 10;
-    health = 10;
+    health = 5;
     frameCounter = 0;
+    speed = 50;
 }
 
 void Player::Move(float x, float y) {
