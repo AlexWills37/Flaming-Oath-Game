@@ -1,16 +1,16 @@
 /* test.cpp
  *
  * The main source file for our game!
- * 
+ *
  * Music credit to https://patrickdearteaga.com
- * 
+ *
  * @author Jhonder Abreus
  * @author Alex Wills
- * @date April 11, 2023 
+ * @date April 11, 2023
  */
 #include <SFML/Graphics.hpp>
-#include<iostream>
-#include<SFML/Audio.hpp>
+#include <iostream>
+#include <SFML/Audio.hpp>
 
 #include <vector>
 
@@ -19,8 +19,7 @@
 #include "PauseScreen.h"
 #include "HealthBar.h"
 #include "Time.h"
-
-
+#include "InputManager.h"
 
 int main()
 {
@@ -34,17 +33,14 @@ int main()
     // Open Window
     sf::RenderWindow window(sf::VideoMode(1280, 1024), "Game");
 
-
-
     // Set up background
     sf::Texture spaceBGTexture;
-    spaceBGTexture.setRepeated(true);   
+    spaceBGTexture.setRepeated(true);
     spaceBGTexture.loadFromFile("./assets/sprites/SpaceBG.png");
     sf::Sprite spaceBackground;
     spaceBackground.setTextureRect(sf::IntRect(0, 0, 1280 * 2, 1024));
     spaceBackground.setTexture(spaceBGTexture);
     window.draw(spaceBackground);
-
 
     // Set up text
     sf::Font font;
@@ -58,8 +54,9 @@ int main()
 
     // Load music
     sf::Music music;
-    if( !music.openFromFile("./assets/music/Goliath's Foe.ogg")){
-        std::cout<<"ERROR"<<std::endl;
+    if (!music.openFromFile("./assets/music/Goliath's Foe.ogg"))
+    {
+        std::cout << "ERROR" << std::endl;
     }
     music.play();
 
@@ -83,16 +80,14 @@ int main()
     fireTexture.loadFromFile("./assets/sprites/dragon-fire.png");
     Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture);
 
-
     // Create pause screen
     sf::Texture pauseTexture;
     pauseTexture.loadFromFile("./assets/sprites/paused.png");
     PauseScreen pauseScreen = PauseScreen(&window, &pauseTexture);
 
-    
     // Objects for keeping track of time
     float timeBtwnFrames = 1.0 / fps;
-    sf::Clock* frameClock = Time::GetInstance()->GetClock();
+    sf::Clock *frameClock = Time::GetInstance()->GetClock();
     sf::Event event;
     int frameCount = 0;
     float deltaTime;
@@ -101,7 +96,12 @@ int main()
     bool paused = false;
     bool escape_pressed = false;
     bool mouseClicked = false;
+    bool mouseClickComplete = false;
     sf::Vector2i mousePosition;
+
+    // Set up input
+    InputManager *input = InputManager::GetInputManager();
+    input->SetGraphicsWindow(&window);
 
     std::cout << "! Game loaded." << std::endl;
     // Keep window open
@@ -109,108 +109,122 @@ int main()
     {
 
         // Do frames by time
-        if (frameClock->getElapsedTime().asSeconds() >= timeBtwnFrames) {
+        if (frameClock->getElapsedTime().asSeconds() >= timeBtwnFrames)
+        {
             // When it is time for a frame, reset the clock and "do" the frame
             deltaTime = frameClock->getElapsedTime().asSeconds();
             frameCount++;
 
-            // Process user input
-            while (window.pollEvent(event))
-            {
-                // Register if the window is closed
-                if (event.type == sf::Event::Closed) {
-                    window.close();
-                }
-                    // Register if a key is pressed
-                else if (event.type == sf::Event::KeyPressed) {
-                    if (event.key.code == sf::Keyboard::A) {
-                        movingLeft = true;
-                    }
-                    else if (event.key.code == sf::Keyboard::D) {
-                        movingRight = true;
-                    }
-                    else if (event.key.code == sf::Keyboard::Escape) {
-                        if (!escape_pressed) {
-                            paused = !paused;
-                            escape_pressed = true;
-                            mouseClicked = false;   // On escape, unclick the mouse to start
-                                                    // This is to make sure that there is no immediate click
-                        }
-                    }
-                }
-                    // Register if a key is released
-                else if (event.type == sf::Event::KeyReleased) {
-                    if (event.key.code == sf::Keyboard::A) {
-                        movingLeft = false;
-                    }
-                    else if (event.key.code == sf::Keyboard::D) {
-                        movingRight = false;
-                    }
-                    else if (event.key.code == sf::Keyboard::Escape) {
-                        escape_pressed = false;
-                    }
-                }
-                    // Register the end of a mouse click
-                else if (event.type == sf::Event::MouseButtonReleased) {
-                    mouseClicked = true;
-                    mousePosition = sf::Mouse::getPosition(window);
-                }   
 
-            }   // Input has been handled
+            // ~~~~~~~~ Update user input ~~~~~~~~
+            input->UpdateInput();
+
+            // ~~~~~~~~ Process user input ~~~~~~~~
+            // Move left and right
+            if (input->IsKeyPressed(sf::Keyboard::A))
+            {
+                movingLeft = true;
+            }
+            else
+            {
+                movingLeft = false;
+            }
+            if (input->IsKeyPressed(sf::Keyboard::D))
+            {
+                movingRight = true;
+            }
+            else
+            {
+                movingRight = false;
+            }
+
+            // Pause game
+            if (input->IsKeyPressed(sf::Keyboard::Escape))
+            {
+                if (!escape_pressed)
+                {
+                    paused = !paused;
+                    escape_pressed = true;
+                    mouseClicked = false;
+                }
+            }
+            else
+            {
+                escape_pressed = false;
+            }
+
+            // ~~~~~~~~ Input has been handled ~~~~~~~~
 
             // Game is paused! Handle possible mouse clicks
-            if (paused) {
+            if (paused)
+            {
 
-                if (mouseClicked)
+                if (input->IsMousePressed())
+                {
+                    mouseClicked = true;
+                }
+                else
+                {
+                    // Activate mouse click when mouse is released
+                    if (mouseClicked)
+                    {
+                        mouseClickComplete = true;
+                        mousePosition = input->GetMousePosition();
+                        mouseClicked = false;
+                    }
+                }
+
+                if (mouseClickComplete)
                 {
                     PauseScreen::Button command = pauseScreen.click(mousePosition);
                     switch (command)
                     {
-                        case PauseScreen::Button::QUIT:
-                            window.close();
-                            break;
-                        deafult:
-                            break;
+                    case PauseScreen::Button::QUIT:
+                        window.close();
+                        break;
+                    deafult:
+                        break;
                     }
                     // Once the click has been handled, reset the flag
-                    mouseClicked = false;
+                    mouseClickComplete = false;
                 }
 
                 window.clear();
                 pauseScreen.Draw();
                 window.display();
             }
-            else {
+            else
+            {
 
                 // Move characters
-                if (movingLeft && !movingRight) {
+                if (movingLeft && !movingRight)
+                {
                     wizard.Move(-movementSpeed * deltaTime, 0);
-                } else if (movingRight && !movingLeft) {
+                }
+                else if (movingRight && !movingLeft)
+                {
                     wizard.Move(movementSpeed * deltaTime, 0);
                 }
 
                 // Move the dragon and fire
                 dragon.Move();
 
-
                 // Update the game states
                 wizard.FrameUpdate();
-
 
                 // Check collisions
                 dragon.CheckCollision(&wizard);
 
-            
                 // Show the score
                 text.setString("Health: " + std::to_string(wizard.GetHealth()));
                 playerHealth.setHealth(wizard.GetHealth());
-                
 
                 // Move the background
                 sf::Vector2f pos = spaceBackground.getPosition();
                 pos.x -= 5;
                 // Once the upper left corner is 1 Window to the left of the screen, move it back
-                if (pos.x <= -float(window.getSize().x)) {
+                if (pos.x <= -float(window.getSize().x))
+                {
                     pos.x += window.getSize().x;
                 }
                 spaceBackground.setPosition(pos);
@@ -228,22 +242,18 @@ int main()
                 // *************************************
                 window.display();
 
-                // Reset clock for next frame
-                frameClock->restart();
 
                 // See if the game is over
                 if (wizard.GetHealth() <= 0)
                 {
                     window.close();
                 }
-            }
-        }
+            } // End of pause if-else
 
-        
-    }
-
-
-
+            // Reset clock for next frame
+            frameClock->restart();
+        }   // End of code for 1 frame
+    }   // End of game; window is closed
 
     std::cout << "! Game closed." << std::endl;
     return 0;
