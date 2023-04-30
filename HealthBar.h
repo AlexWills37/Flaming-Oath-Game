@@ -1,11 +1,19 @@
+/* HealthBar.h
+ *
+ * A sprite representation of a character's health.
+ * 
+ * @author Alex Wills
+ */
+#ifndef _HEALTHBAR_H
+#define _HEALTHBAR_H
 
 #include <SFML/Graphics.hpp>
+#include "entity.h"
 
-class HealthBar {
+class HealthBar: public Entity {
 
     // Member variables
     private:
-        sf::RenderWindow * window;
         sf::Texture * emptyHeartTexture;
         sf::Texture * filledHeartTexture;
         sf::Sprite backgroundSprite;
@@ -44,9 +52,13 @@ class HealthBar {
 
         void Draw();
 
+        void SetPosition(float x, float y);
+
     // Helper functions
     private:
         void drawBackground();
         void drawHearts(int numHearts);
 
 };
+
+#endif

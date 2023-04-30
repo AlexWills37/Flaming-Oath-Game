@@ -24,5 +24,9 @@ sf::Clock* Time::GetClock()
 
 float Time::DeltaTime()
 {
-    return this->clock.getElapsedTime().asSeconds();
+    return deltaTime;
+}
+
+void Time::ResetTime() {
+    deltaTime = clock.restart().asSeconds();
 }

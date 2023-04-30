@@ -8,17 +8,19 @@
  */
 #include "player.h"
 #include "Time.h"
+#include "InputManager.h"
+#include <iostream>
 
 
-Player::Player(sf::RenderWindow * window, sf::Texture * texture): Entity(window, texture, 300, 1000) {
+Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * healthBar)
+    : LivingEntity(window, texture, 300, 1000, healthBar) {
     // Set the origin to the middle of the sprite's feet
     sprite.setOrigin(38, 132);
 
-    // Set initial score and health
+    // Set initial score and speed
     score = 10;
-    health = 5;
     frameCounter = 0;
-    speed = 50;
+    speed = 850;
 }
 
 void Player::Move(float x, float y) {
@@ -54,12 +56,32 @@ void Player::DecreaseScore(int change)
     this->score -= change;
 }
 
-int Player::GetHealth()
-{
-    return this->health;
-}
 
-void Player::ChangeHealth(int change)
-{
-    this->health += change;
+void Player::Update() {
+    float deltaTime = Time::GetInstance()->DeltaTime();
+    InputManager* input = InputManager::GetInputManager();
+    bool movingLeft, movingRight;
+
+    
+    // Handle user inputs
+    if (input->IsKeyPressed(sf::Keyboard::A)) {
+        movingLeft = true;
+    } else {
+        movingLeft = false;
+    }
+
+    if (input->IsKeyPressed(sf::Keyboard::D)) {
+        movingRight = true;
+    } else {
+        movingRight = false;
+    }
+
+    if (movingLeft && !movingRight)
+    {
+        this->Move(-speed * deltaTime, 0);
+    } else if (movingRight && !movingLeft) {
+        this->Move(speed * deltaTime, 0);
+    }
+
+
 }

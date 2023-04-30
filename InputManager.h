@@ -3,6 +3,9 @@
  * Interface for all of the input
  */
 
+#ifndef _INPUTMANAGER_H
+#define _INPUTMANAGER_H
+
 #include <map>
 #include <SFML/Graphics.hpp>
 
@@ -28,13 +31,14 @@ class InputManager {
         bool mouseClicked;
 
     public:
-        // Delete the copy constructor
-        InputManager(const InputManager& to_copy) = delete;
-
         /*
          * Returns a pointer to the single input manager.
          */
         static InputManager* GetInputManager();
+
+        // Delete the copy constructor
+        InputManager(const InputManager& to_copy) = delete;
+
 
         /*
          * Sets the render window to listen for events.
@@ -62,3 +66,5 @@ class InputManager {
         sf::Vector2i GetMousePosition();
 
 };
+
+#endif

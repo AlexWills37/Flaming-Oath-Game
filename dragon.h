@@ -61,12 +61,12 @@ class Dragon: public Entity {
          * Constructor
          * @param window - the window to draw the dragon to
          */
-        Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Texture * fireTexture);
+        Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Texture * fireTexture, Player * player);
 
         /*
          * Moves the dragon randomly.
          */
-        void Move();
+        void Update();
 
         /*
          * Create a DragonFire and send it towards the player.
@@ -85,6 +85,7 @@ class Dragon: public Entity {
         DragonFire fires[maxFires];  // A list of the DragonFire objects that belong to this dragon.
         Movement currentMovement;
         int movementCounter;
+        Player* player;
         
 
 };

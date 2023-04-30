@@ -46,14 +46,19 @@ class Entity {
         /*
          * Update the sprite's state
          */
-        void Update();
+        virtual void Update() {}
 
         /*
          * Draw this entity's sprite(s) to the screen.
          */
-        void Draw();
+        virtual void Draw();
 
         sf::FloatRect getGlobalBounds();
+
+        /*
+         * Sets the position of the sprite to a place in screen coordinates.
+         */
+        void SetPosition(float x, float y);
 
     protected:
         // These variables can be accessed by children classes

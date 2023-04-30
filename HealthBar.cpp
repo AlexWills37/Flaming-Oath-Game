@@ -66,3 +66,8 @@ void HealthBar::Draw()
     this->drawBackground();
     this->drawHearts(this->health);
 }
+
+void HealthBar::SetPosition(float x, float y) {
+    heartsSprite.setPosition(x, y);
+    backgroundSprite.setPosition(x, y);
+}

@@ -20,6 +20,7 @@
 #include "HealthBar.h"
 #include "Time.h"
 #include "InputManager.h"
+#include "Level.h"
 
 int main()
 {
@@ -60,13 +61,6 @@ int main()
     }
     music.play();
 
-    // Set up Player
-    sf::Texture playerTexture;
-    playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
-    Player wizard = Player(&window, &playerTexture);
-    bool movingLeft = false;
-    bool movingRight = false;
-
     // Set up health bar
     sf::Texture emptyHearts;
     emptyHearts.loadFromFile("./assets/sprites/Empty Hearts.png");
@@ -74,11 +68,20 @@ int main()
     filledHearts.loadFromFile("./assets/sprites/Filled Hearts.png");
     HealthBar playerHealth = HealthBar(&window, &emptyHearts, &filledHearts);
 
+    // Set up Player
+    sf::Texture playerTexture;
+    playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
+    Player wizard = Player(&window, &playerTexture, &playerHealth);
+    bool movingLeft = false;
+    bool movingRight = false;
+    wizard.EnableFollowingHealthBar(sf::Vector2f(-75, -200));
+
+
     // Create dragon
     sf::Texture dragonTexture, fireTexture;
     dragonTexture.loadFromFile("./assets/sprites/0001.png");
     fireTexture.loadFromFile("./assets/sprites/dragon-fire.png");
-    Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture);
+    Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture, &wizard);
 
     // Create pause screen
     sf::Texture pauseTexture;
@@ -103,6 +106,22 @@ int main()
     InputManager *input = InputManager::GetInputManager();
     input->SetGraphicsWindow(&window);
 
+
+    // Level 1: First dragon fight
+    Level easyFightLevel = Level();
+    easyFightLevel.SetWindow(&window);
+    std::vector<Entity*> easyEntities = {&wizard, &dragon};
+    std::vector<sf::Sprite*> easySprites = {&spaceBackground};
+    for (Entity * e : easyEntities) {
+        easyFightLevel.AddEntity(e);
+    }
+    for (sf::Sprite * s : easySprites) {
+        easyFightLevel.AddSprite(s);
+    }
+
+    float test = 0;
+    int test2 = 0;
+
     std::cout << "! Game loaded." << std::endl;
     // Keep window open
     while (window.isOpen())
@@ -111,144 +130,34 @@ int main()
         // Do frames by time
         if (frameClock->getElapsedTime().asSeconds() >= timeBtwnFrames)
         {
-            // When it is time for a frame, reset the clock and "do" the frame
-            deltaTime = frameClock->getElapsedTime().asSeconds();
+            // When it is time for a frame, "do" the frame and reset the clock for the next frame
+            Time::GetInstance()->ResetTime();
             frameCount++;
 
 
-            // ~~~~~~~~ Update user input ~~~~~~~~
-            input->UpdateInput();
+            window.clear();
+            easyFightLevel.HandleInputs();
+            easyFightLevel.UpdateEntities();
+            easyFightLevel.DrawSprites();
 
-            // ~~~~~~~~ Process user input ~~~~~~~~
-            // Move left and right
-            if (input->IsKeyPressed(sf::Keyboard::A))
+            // Render the frame
+            // // ******** Draw the frame here ********
+            // // **---------------------------------**
+            // window.draw(spaceBackground);
+            // window.draw(text);
+            // wizard.Draw();
+            // dragon.Draw();
+            // playerHealth.Draw();
+            // // **---------------------------------**
+            // // *************************************
+            window.display();
+
+
+            // See if the game is over
+            if (wizard.GetHealth() <= 0)
             {
-                movingLeft = true;
+                window.close();
             }
-            else
-            {
-                movingLeft = false;
-            }
-            if (input->IsKeyPressed(sf::Keyboard::D))
-            {
-                movingRight = true;
-            }
-            else
-            {
-                movingRight = false;
-            }
-
-            // Pause game
-            if (input->IsKeyPressed(sf::Keyboard::Escape))
-            {
-                if (!escape_pressed)
-                {
-                    paused = !paused;
-                    escape_pressed = true;
-                    mouseClicked = false;
-                }
-            }
-            else
-            {
-                escape_pressed = false;
-            }
-
-            // ~~~~~~~~ Input has been handled ~~~~~~~~
-
-            // Game is paused! Handle possible mouse clicks
-            if (paused)
-            {
-
-                if (input->IsMousePressed())
-                {
-                    mouseClicked = true;
-                }
-                else
-                {
-                    // Activate mouse click when mouse is released
-                    if (mouseClicked)
-                    {
-                        mouseClickComplete = true;
-                        mousePosition = input->GetMousePosition();
-                        mouseClicked = false;
-                    }
-                }
-
-                if (mouseClickComplete)
-                {
-                    PauseScreen::Button command = pauseScreen.click(mousePosition);
-                    switch (command)
-                    {
-                    case PauseScreen::Button::QUIT:
-                        window.close();
-                        break;
-                    deafult:
-                        break;
-                    }
-                    // Once the click has been handled, reset the flag
-                    mouseClickComplete = false;
-                }
-
-                window.clear();
-                pauseScreen.Draw();
-                window.display();
-            }
-            else
-            {
-
-                // Move characters
-                if (movingLeft && !movingRight)
-                {
-                    wizard.Move(-movementSpeed * deltaTime, 0);
-                }
-                else if (movingRight && !movingLeft)
-                {
-                    wizard.Move(movementSpeed * deltaTime, 0);
-                }
-
-                // Move the dragon and fire
-                dragon.Move();
-
-                // Update the game states
-                wizard.FrameUpdate();
-
-                // Check collisions
-                dragon.CheckCollision(&wizard);
-
-                // Show the score
-                text.setString("Health: " + std::to_string(wizard.GetHealth()));
-                playerHealth.setHealth(wizard.GetHealth());
-
-                // Move the background
-                sf::Vector2f pos = spaceBackground.getPosition();
-                pos.x -= 5;
-                // Once the upper left corner is 1 Window to the left of the screen, move it back
-                if (pos.x <= -float(window.getSize().x))
-                {
-                    pos.x += window.getSize().x;
-                }
-                spaceBackground.setPosition(pos);
-
-                // Render the frame
-                window.clear();
-                // ******** Draw the frame here ********
-                // **---------------------------------**
-                window.draw(spaceBackground);
-                window.draw(text);
-                wizard.Draw();
-                dragon.Draw();
-                playerHealth.Draw();
-                // **---------------------------------**
-                // *************************************
-                window.display();
-
-
-                // See if the game is over
-                if (wizard.GetHealth() <= 0)
-                {
-                    window.close();
-                }
-            } // End of pause if-else
 
             // Reset clock for next frame
             frameClock->restart();

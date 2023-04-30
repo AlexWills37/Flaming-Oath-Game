@@ -10,16 +10,16 @@
 #define _PLAYER_H
 
 #include <SFML/Graphics.hpp>
-#include "entity.h"
+#include "LivingEntity.h"
 #include "dragon.h"
 
-class Player: public Entity {
+class Player: public LivingEntity {
 
     public:
         /*
          * Creates the player as an Entity with a texture.
          */
-        Player(sf::RenderWindow * window, sf::Texture * texture);
+        Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * health);
 
         /*
          * Moves the player.
@@ -37,16 +37,16 @@ class Player: public Entity {
          */
         void FrameUpdate();
 
-        int GetHealth();
 
-        void ChangeHealth(int change);
+        // void ChangeHealth(int change);
 
         void DecreaseScore(int change);
+
+        void Update();  
 
     private:
         int frameCounter;   // A counter to increase the player's score over time
         int score;          // The player's score
-        int health;         // The player's health
         float speed;
 
 };
