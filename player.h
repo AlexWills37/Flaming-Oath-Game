@@ -10,9 +10,8 @@
 #define _PLAYER_H
 
 #include <SFML/Graphics.hpp>
-#include "entity.h"
+#include "LivingEntity.h"
 #include "dragon.h"
-
 /*
  * WizardSpells represents the fire that a dragon breaths to attack the player.
  */
@@ -42,13 +41,18 @@ class WizardSpells: public Entity {  // Since this is private, only WizardSpells
         // const int textureHeight = 163;
 };
 
-class Player: public Entity {
+class Player: public LivingEntity {
+
 
     public:
         /*
          * Creates the player as an Entity with a texture.
          */
-        Player(sf::RenderWindow * window, sf::Texture * texture, sf::Texture * fireTexture1);
+
+        //Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * health);
+
+        //Player(sf::RenderWindow * window, sf::Texture * texture, sf::Texture * fireTexture1);
+
 
         /*
          * Moves the player.
@@ -75,22 +79,27 @@ class Player: public Entity {
          */
         void FrameUpdate();
 
-        int GetHealth();
 
-        void ChangeHealth(int change);
+        // void ChangeHealth(int change);
 
 
         void DecreaseScore(int change);
 
-        //bool CheckCollission1(Dragon * dragon);
 
+        void Update();  
+
+    private:
         int frameCounter;   // A counter to increase the player's score over time
         int score;          // The player's score
-        int health;         // The player's health
+        float speed;
+
+        //bool CheckCollission1(Dragon * dragon);
+
         static const int maxFires1 = 10;  // How many fires can be on screen at once      
         WizardSpells fires1[maxFires1];  // A list of the DragonFire objects that belong to this dragon.
         //Movement currentMovement;
         //int movementCounter;
+
 
 };
 

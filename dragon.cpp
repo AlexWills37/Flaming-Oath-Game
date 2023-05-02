@@ -16,7 +16,8 @@
  * @param dragonTexture - pointer to the texture for the dragon that moves and spits fire
  * @param fireTexture - pointer to the texture for the fire that the dragon spits
  */
-Dragon::Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Texture * fireTexture): Entity(window, dragonTexture, 500, 200)
+Dragon::Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, 
+    sf::Texture * fireTexture, Player * player, HealthBar * healthBar): LivingEntity(window, dragonTexture, 500, 200, healthBar)
 {
     // Providing a seed value for the dragon's random behavior
     srand((unsigned) time(NULL));
@@ -29,12 +30,15 @@ Dragon::Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Textu
 
     currentMovement = Movement::NONE;
     movementCounter = 0;
+    this->player = player;
+
+    this->EnableFollowingHealthBar(sf::Vector2f(-10, -50));
 }
 
 /*
  * Moves the Dragon randomly, occasionally spitting fire as well.
  */
-void Dragon::Move()
+void Dragon::Update()
 {
     // Move based on current action    
     switch (currentMovement)
@@ -102,6 +106,9 @@ void Dragon::Move()
             fires[i].MoveDown();
         }
     }
+
+    // Check for collisions
+    this->CheckCollision(player);
 }
 
 /*
@@ -149,7 +156,7 @@ void Dragon::Draw()
     }
     
     // Draw the dragon last, so that it is on top of any fire
-    Entity::Draw();
+    LivingEntity::Draw();
 }
 
 

@@ -1,45 +1,62 @@
 /* test.cpp
  *
  * The main source file for our game!
- * 
+ *
  * Music credit to https://patrickdearteaga.com
- * 
+ *
  * @author Jhonder Abreus
  * @author Alex Wills
- * @date April 11, 2023 
+ * @date April 11, 2023
  */
 #include <SFML/Graphics.hpp>
-#include<iostream>
-#include<SFML/Audio.hpp>
+#include <iostream>
+#include <SFML/Audio.hpp>
 
 #include <vector>
 
 #include "dragon.h"
 #include "player.h"
+#include "PauseScreen.h"
+#include "HealthBar.h"
+#include "Time.h"
+#include "InputManager.h"
+#include "Level.h"
+#include "Dialogue.h"
+
+Level * LoadStory1(sf::RenderWindow * window) {
+    Level * level = new Level();
+    
+    Dialogue * dialogueSystem = new Dialogue(window);
+    std::vector<TextObject*> dialogue = {
+        new TextObject("Villager", "You there! Please save us! You are our only hope!"),
+        new TextObject("Villager", "Why... Why.. are the dragons attacking...")
+    };
+    dialogueSystem->InitializeDialogue(dialogue);
+    level->AddEntity(dialogueSystem);
+
+    return level;
+}
 
 int main()
 {
     // ****** Variables to configure the game ******* //
-    float movementSpeed = 10;
+    float movementSpeed = 1000;
     float fps = 60;
 
     // ********************************************** //
-    std::cout << "! Starting program..." << std::endl;
+    std::cout << "! Loading game..." << std::endl;
 
     // Open Window
     sf::RenderWindow window(sf::VideoMode(1280, 1024), "Game");
 
-
-
     // Set up background
     sf::Texture spaceBGTexture;
-    spaceBGTexture.setRepeated(true);   
+    spaceBGTexture.setRepeated(true);
     spaceBGTexture.loadFromFile("./assets/sprites/SpaceBG.png");
     sf::Sprite spaceBackground;
     spaceBackground.setTextureRect(sf::IntRect(0, 0, 1280 * 2, 1024));
     spaceBackground.setTexture(spaceBGTexture);
     window.draw(spaceBackground);
-
 
     // Set up text
     sf::Font font;
@@ -53,8 +70,9 @@ int main()
 
     // Load music
     sf::Music music;
-    if( !music.openFromFile("./assets/music/Goliath's Foe.ogg")){
-        std::cout<<"ERROR"<<std::endl;
+    if (!music.openFromFile("./assets/music/Goliath's Foe.ogg"))
+    {
+        std::cout << "ERROR" << std::endl;
     }
     //music.play();
     sf::SoundBuffer firesou;
@@ -68,9 +86,18 @@ int main()
     fsound.setBuffer(firesou);
     //fsound.play();
 
+    // Set up health bar
+    sf::Texture emptyHearts;
+    emptyHearts.loadFromFile("./assets/sprites/Empty Hearts.png");
+    sf::Texture filledHearts;
+    filledHearts.loadFromFile("./assets/sprites/Filled Hearts.png");
+    HealthBar playerHealth = HealthBar(&window, &emptyHearts, &filledHearts);
+
+
     // Set up Player
     sf::Texture playerTexture, fireTexture1;
     playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
+
     fireTexture1.loadFromFile("./assets/sprites/wizard-fire.png");
     //healtexture.loadFromFile("./assets/sprites/3/1.png");
     Player wizard = Player(&window, &playerTexture, &fireTexture1);
@@ -78,10 +105,13 @@ int main()
     bool movingLeft = false;
     bool movingRight = false;
 
+
     // Create dragon
+    HealthBar dragonHealth = playerHealth;
     sf::Texture dragonTexture, fireTexture;
     dragonTexture.loadFromFile("./assets/sprites/0001.png");
     fireTexture.loadFromFile("./assets/sprites/dragon-fire.png");
+
     Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture);
 
     // Create dragon 2
@@ -91,127 +121,90 @@ int main()
     Dragon dragon2 = Dragon(&window, &dragonTexture2, &fireTexture2);
 
 
+    // Create pause screen
+    sf::Texture pauseTexture;
+    pauseTexture.loadFromFile("./assets/sprites/paused.png");
+    PauseScreen pauseScreen = PauseScreen(&window, &pauseTexture);
 
-    
     // Objects for keeping track of time
     float timeBtwnFrames = 1.0 / fps;
-    sf::Clock frameClock;
-    sf::Event event;
-    int frameCount = 0;
+    sf::Clock *frameClock = Time::GetInstance()->GetClock();
 
+    // Configure input
+    InputManager * input = InputManager::GetInputManager();
+    input->SetGraphicsWindow(&window);
+
+    // Level 1: First dragon fight
+    Level easyFightLevel = Level();
+    easyFightLevel.SetWindow(&window);
+    std::vector<Entity*> easyEntities = {&wizard, &dragon};
+    std::vector<sf::Sprite*> easySprites = {&spaceBackground};
+    for (Entity * e : easyEntities) {
+        easyFightLevel.AddEntity(e);
+    }
+    for (sf::Sprite * s : easySprites) {
+        easyFightLevel.AddSprite(s);
+    }
+
+
+    Level* intro = LoadStory1(&window);
+
+    float test = 0;
+    int test2 = 0;
+
+    std::cout << "! Game loaded." << std::endl;
     // Keep window open
     while (window.isOpen())
     {
 
         // Do frames by time
-        if (frameClock.getElapsedTime().asSeconds() >= timeBtwnFrames) {
-            // When it is time for a frame, reset the clock and "do" the frame
-            frameCount++;
-
-            // Process user input
-            while (window.pollEvent(event))
-            {
-                // Register if the window is closed
-                if (event.type == sf::Event::Closed) {
-                    window.close();
-                }
-                    // Register if a key is pressed
-                else if (event.type == sf::Event::KeyPressed) {
-                    if (event.key.code == sf::Keyboard::A) {
-                        movingLeft = true;
-                    }
-                    else if (event.key.code == sf::Keyboard::D) {
-                        movingRight = true;
-                    }
-                }
-                else if (event.key.code == sf::Keyboard::J) {
+        if (frameClock->getElapsedTime().asSeconds() >= timeBtwnFrames)
+        {
+            // When it is time for a frame, "do" the frame and reset the clock for the next frame
+            Time::GetInstance()->ResetTime();
+           /*  else if (event.key.code == sf::Keyboard::J) {
                     wizard.ShootFire();
                 }
                 else if (event.key.code == sf::Keyboard::K) {
                     wizard.ShootFire();
-                }
-                    // Register if a key is released
-                else if (event.type == sf::Event::KeyReleased) {
-                    if (event.key.code == sf::Keyboard::A) {
-                        movingLeft = false;
-                    }
-                    else if (event.key.code == sf::Keyboard::D) {
-                        movingRight = false;
-                    }
-                } 
-            
+                } */
 
 
-            }   // Input has been handled
 
-            // Move characters
-            if (movingLeft && !movingRight) {
-                wizard.Move(-movementSpeed, 0);
-            } else if (movingRight && !movingLeft) {
-                wizard.Move(movementSpeed, 0);
-            }
-            for (int i = 0; i < Player::maxFires1; i++) {
-                if (!wizard.fires1[i].offScreen1) {
-                    wizard.fires1[i].MoveUp();
-                }
-            }
-
-            // Move the dragon and fire
-            dragon.Move();
-            dragon2.Move();
-
-            // Update the game states
-            wizard.FrameUpdate();
-
-
-            // Check collisions
-            dragon.CheckCollision(&wizard);
-            dragon2.CheckCollision(&wizard);
-
-        
-            // Show the score
-            text.setString("Health: " + std::to_string(wizard.GetHealth()));
-            
-
-            // Move the background
-            sf::Vector2f pos = spaceBackground.getPosition();
-            pos.x -= 5;
-            // Once the upper left corner is 1 Window to the left of the screen, move it back
-            if (pos.x <= -float(window.getSize().x)) {
-                pos.x += window.getSize().x;
-            }
-            spaceBackground.setPosition(pos);
+            window.clear();
+            easyFightLevel.HandleInputs();
+            easyFightLevel.UpdateEntities();
+            easyFightLevel.DrawSprites();
+            // intro->HandleInputs();
+            // intro->UpdateEntities();
+            // intro->DrawSprites();
 
             // Render the frame
-            window.clear();
-            // ******** Draw the frame here ********
-            // **---------------------------------**
-            window.draw(spaceBackground);
-            window.draw(text);
-            wizard.Draw();
-            wizard.Draw1();
-            dragon.Draw();
-            dragon2.Draw();
-            // **---------------------------------**
-            // *************************************
+
+            // // ******** Draw the frame here ********
+            // // **---------------------------------**
+            // window.draw(spaceBackground);
+            // window.draw(text);
+            // wizard.Draw();
+            // dragon.Draw();
+            // playerHealth.Draw();
+            // // **---------------------------------**
+            // // *************************************
+
             window.display();
 
-            // Reset clock for next frame
-            frameClock.restart();
 
             // See if the game is over
             if (wizard.GetHealth() <= 0)
             {
                 window.close();
             }
-        }
 
-        
-    }
+            // Reset clock for next frame
+            frameClock->restart();
+        }   // End of code for 1 frame
+    }   // End of game; window is closed
 
-
-
-
-    std::cout << "! Program finished!" << std::endl;
+    std::cout << "! Game closed." << std::endl;
     return 0;
 }

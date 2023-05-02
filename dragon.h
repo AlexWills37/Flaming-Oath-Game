@@ -56,19 +56,20 @@ enum class Movement {
 /*
  * Dragon is an enemy that attacks the player.
  */
-class Dragon: public Entity {
+class Dragon: public LivingEntity {
     public:
 
         /*
          * Constructor
          * @param window - the window to draw the dragon to
          */
-        Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Texture * fireTexture);
+        Dragon(sf::RenderWindow * window, sf::Texture * dragonTexture, sf::Texture * fireTexture, 
+            Player * player, HealthBar * healthBar);
 
         /*
          * Moves the dragon randomly.
          */
-        void Move();
+        void Update();
 
         /*
          * Create a DragonFire and send it towards the player.
@@ -88,6 +89,7 @@ class Dragon: public Entity {
         DragonFire fires[maxFires];  // A list of the DragonFire objects that belong to this dragon.
         Movement currentMovement;
         int movementCounter;
+        Player* player;
         
 
 };

@@ -87,3 +87,7 @@ sf::FloatRect Entity::getGlobalBounds()
 {
     return this->sprite.getGlobalBounds();
 }
+
+void Entity::SetPosition(float x, float y) {
+    sprite.setPosition(x, y);
+}
