@@ -17,8 +17,6 @@
 #include "dragon.h"
 #include "player.h"
 
-
-
 int main()
 {
     // ****** Variables to configure the game ******* //
@@ -71,9 +69,11 @@ int main()
     //fsound.play();
 
     // Set up Player
-    sf::Texture playerTexture;
+    sf::Texture playerTexture, fireTexture1;
     playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
-    Player wizard = Player(&window, &playerTexture);
+    fireTexture1.loadFromFile("./assets/sprites/wizard-fire.png");
+    //healtexture.loadFromFile("./assets/sprites/3/1.png");
+    Player wizard = Player(&window, &playerTexture, &fireTexture1);
     std::cout << "Starting score: " << wizard.GetScore() << std::endl;
     bool movingLeft = false;
     bool movingRight = false;
@@ -84,6 +84,11 @@ int main()
     fireTexture.loadFromFile("./assets/sprites/dragon-fire.png");
     Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture);
 
+    // Create dragon 2
+    sf::Texture dragonTexture2, fireTexture2;
+    dragonTexture2.loadFromFile("./assets/sprites/0002.png");
+    fireTexture2.loadFromFile("./assets/sprites/dragon-fire.png");
+    Dragon dragon2 = Dragon(&window, &dragonTexture2, &fireTexture2);
 
 
 
@@ -119,6 +124,12 @@ int main()
                         movingRight = true;
                     }
                 }
+                else if (event.key.code == sf::Keyboard::J) {
+                    wizard.ShootFire();
+                }
+                else if (event.key.code == sf::Keyboard::K) {
+                    wizard.ShootFire();
+                }
                     // Register if a key is released
                 else if (event.type == sf::Event::KeyReleased) {
                     if (event.key.code == sf::Keyboard::A) {
@@ -127,7 +138,9 @@ int main()
                     else if (event.key.code == sf::Keyboard::D) {
                         movingRight = false;
                     }
-                }
+                } 
+            
+
 
             }   // Input has been handled
 
@@ -137,10 +150,15 @@ int main()
             } else if (movingRight && !movingLeft) {
                 wizard.Move(movementSpeed, 0);
             }
+            for (int i = 0; i < Player::maxFires1; i++) {
+                if (!wizard.fires1[i].offScreen1) {
+                    wizard.fires1[i].MoveUp();
+                }
+            }
 
             // Move the dragon and fire
             dragon.Move();
-            
+            dragon2.Move();
 
             // Update the game states
             wizard.FrameUpdate();
@@ -148,6 +166,7 @@ int main()
 
             // Check collisions
             dragon.CheckCollision(&wizard);
+            dragon2.CheckCollision(&wizard);
 
         
             // Show the score
@@ -170,7 +189,9 @@ int main()
             window.draw(spaceBackground);
             window.draw(text);
             wizard.Draw();
+            wizard.Draw1();
             dragon.Draw();
+            dragon2.Draw();
             // **---------------------------------**
             // *************************************
             window.display();

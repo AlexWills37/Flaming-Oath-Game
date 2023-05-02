@@ -55,7 +55,7 @@ class Entity {
 
         sf::FloatRect getGlobalBounds();
 
-    protected:
+    
         // These variables can be accessed by children classes
         sf::Sprite sprite;
         sf::Texture * texture;
