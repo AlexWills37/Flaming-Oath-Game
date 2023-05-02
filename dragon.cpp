@@ -6,7 +6,8 @@
  * @date April 7, 2023
  */
 #include "dragon.h"
-#include<cstdlib>
+#include <SFML/Audio.hpp>
+#include <cstdlib>
 #include <iostream>
 
 /*
@@ -82,6 +83,9 @@ void Dragon::Update()
         movementCounter = 0;
     }
 
+    //setup fire sound effect
+
+    //firespit.loadFromFile("./assets/music/frre spit.wav");
 
     // Randomly spit fire
     int random = rand() % 60;
@@ -90,6 +94,7 @@ void Dragon::Update()
         // Spit fire!
         case 0:
             this->SpitFire();
+            //fsound.play();
             break;
         default:
             break;
@@ -114,6 +119,7 @@ void Dragon::SpitFire()
 {
     // Find the first fire that is off screen and put it where the dragon is
     DragonFire * newFire = nullptr;
+    //DragonFire * firesound = nullptr;
     bool foundFire = false;
     for (int i = 0; i < Dragon::maxFires && !foundFire; ++i)
     {
@@ -123,14 +129,16 @@ void Dragon::SpitFire()
             foundFire = true;
         }
     }
-
     // If we found a fire that is off screen, we can have the dragon spit it out (move it to the dragon)
     if (foundFire) {
         newFire->offScreen = false;
         newFire->sprite.setPosition(this->sprite.getPosition());    // Set the fire to the dragon's current position
-    }
+    
+    //delete firesound;
+    //delete buffer1;
 
     // If we did not find a fire, then there are currently this->maxFires fires on screen, so we will not spit fire.
+}
 }
 
 /*
@@ -158,6 +166,13 @@ void Dragon::Draw()
  */
 bool Dragon::CheckCollision(Player * player)
 {
+    sf::SoundBuffer* buffer2 = new sf::SoundBuffer;
+    if (!buffer2->loadFromFile("./assets/music/hit sfx.wav"))
+    {
+        std::cout<< "ERROR LOADING HIT"<<std::endl;
+    }
+    sf::Sound* hitsound = new sf::Sound;
+    hitsound->setBuffer(*buffer2);
     bool hit = false;
 
     for (int i = 0; i < this->maxFires; i++)
@@ -167,9 +182,11 @@ bool Dragon::CheckCollision(Player * player)
         {
             hit = true;
             this->fires[i].offScreen = true;
+            //hitsound->play();
+            //delete hitsound;
+            //delete buffer2;
             player->ChangeHealth(-1);
         }
     }
-
     return hit;
 }

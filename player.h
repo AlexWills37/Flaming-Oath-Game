@@ -12,14 +12,47 @@
 #include <SFML/Graphics.hpp>
 #include "LivingEntity.h"
 #include "dragon.h"
+/*
+ * WizardSpells represents the fire that a dragon breaths to attack the player.
+ */
+class WizardSpells: public Entity {  // Since this is private, only WizardSpells and the friend class Dragon can call the entity methods
+    friend class Dragon; // Allow Dragon class to access the WizardSpells's private methods/fields (such as .Draw())
+    public:
+        /*
+         * Constructor for WizardSpells.
+         * @param window - a pointer to the window to draw to
+         * @param startingPos - the initial position of the fire
+         */
+        WizardSpells(sf::RenderWindow * window, sf::Texture * texture);
+        /*
+         * Default constructor. Initializes offScreen to true.
+         */
+        WizardSpells();
+        
+        
+        /*
+         * Moves the fire towards the air.
+         */
+        void MoveUp();
+
+        bool offScreen1; // If this is true, the sprite is off screen and we can re-use it
+
+        // const int textureWidth = 46;
+        // const int textureHeight = 163;
+};
 
 class Player: public LivingEntity {
+
 
     public:
         /*
          * Creates the player as an Entity with a texture.
          */
-        Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * health);
+
+        //Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * health);
+
+        //Player(sf::RenderWindow * window, sf::Texture * texture, sf::Texture * fireTexture1);
+
 
         /*
          * Moves the player.
@@ -31,6 +64,15 @@ class Player: public LivingEntity {
          */
         int GetScore();
 
+        
+        /*
+        * Creates a wizard fire that launches it towrds the dragon
+        */
+        void ShootFire();
+
+
+        void Draw1();
+
         /*
          * Update's the player's state (score, collision, etc.).
          * Call this method every frame.
@@ -40,7 +82,9 @@ class Player: public LivingEntity {
 
         // void ChangeHealth(int change);
 
+
         void DecreaseScore(int change);
+
 
         void Update();  
 
@@ -48,6 +92,14 @@ class Player: public LivingEntity {
         int frameCounter;   // A counter to increase the player's score over time
         int score;          // The player's score
         float speed;
+
+        //bool CheckCollission1(Dragon * dragon);
+
+        static const int maxFires1 = 10;  // How many fires can be on screen at once      
+        WizardSpells fires1[maxFires1];  // A list of the DragonFire objects that belong to this dragon.
+        //Movement currentMovement;
+        //int movementCounter;
+
 
 };
 

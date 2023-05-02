@@ -61,6 +61,7 @@ class Entity {
         void SetPosition(float x, float y);
 
     protected:
+
         // These variables can be accessed by children classes
         sf::Sprite sprite;
         sf::Texture * texture;
