@@ -21,6 +21,23 @@
 #include "Time.h"
 #include "InputManager.h"
 #include "Level.h"
+#include "Dialogue.h"
+
+Level * LoadStory1(sf::RenderWindow * window) {
+    Level * level = new Level();
+    
+    Dialogue * dialogueSystem = new Dialogue(window);
+    std::vector<TextObject*> dialogue = {
+        new TextObject("Villager", "You there! Please save us! You are our only hope!"),
+        new TextObject("Villager", "Why... Why.. are the dragons attacking...")
+    };
+    dialogueSystem->InitializeDialogue(dialogue);
+    level->AddEntity(dialogueSystem);
+
+    return level;
+}
+
+
 
 int main()
 {
@@ -68,20 +85,19 @@ int main()
     filledHearts.loadFromFile("./assets/sprites/Filled Hearts.png");
     HealthBar playerHealth = HealthBar(&window, &emptyHearts, &filledHearts);
 
+
     // Set up Player
     sf::Texture playerTexture;
     playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
     Player wizard = Player(&window, &playerTexture, &playerHealth);
-    bool movingLeft = false;
-    bool movingRight = false;
-    wizard.EnableFollowingHealthBar(sf::Vector2f(-75, -200));
 
 
     // Create dragon
+    HealthBar dragonHealth = playerHealth;
     sf::Texture dragonTexture, fireTexture;
     dragonTexture.loadFromFile("./assets/sprites/0001.png");
     fireTexture.loadFromFile("./assets/sprites/dragon-fire.png");
-    Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture, &wizard);
+    Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture, &wizard, &dragonHealth);
 
     // Create pause screen
     sf::Texture pauseTexture;
@@ -91,21 +107,10 @@ int main()
     // Objects for keeping track of time
     float timeBtwnFrames = 1.0 / fps;
     sf::Clock *frameClock = Time::GetInstance()->GetClock();
-    sf::Event event;
-    int frameCount = 0;
-    float deltaTime;
 
-    // Things for pausing the game
-    bool paused = false;
-    bool escape_pressed = false;
-    bool mouseClicked = false;
-    bool mouseClickComplete = false;
-    sf::Vector2i mousePosition;
-
-    // Set up input
-    InputManager *input = InputManager::GetInputManager();
+    // Configure input
+    InputManager * input = InputManager::GetInputManager();
     input->SetGraphicsWindow(&window);
-
 
     // Level 1: First dragon fight
     Level easyFightLevel = Level();
@@ -118,6 +123,9 @@ int main()
     for (sf::Sprite * s : easySprites) {
         easyFightLevel.AddSprite(s);
     }
+
+
+    Level* intro = LoadStory1(&window);
 
     float test = 0;
     int test2 = 0;
@@ -132,13 +140,15 @@ int main()
         {
             // When it is time for a frame, "do" the frame and reset the clock for the next frame
             Time::GetInstance()->ResetTime();
-            frameCount++;
 
 
             window.clear();
             easyFightLevel.HandleInputs();
             easyFightLevel.UpdateEntities();
             easyFightLevel.DrawSprites();
+            // intro->HandleInputs();
+            // intro->UpdateEntities();
+            // intro->DrawSprites();
 
             // Render the frame
             // // ******** Draw the frame here ********

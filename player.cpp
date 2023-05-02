@@ -21,6 +21,7 @@ Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * hea
     score = 10;
     frameCounter = 0;
     speed = 850;
+    this->EnableFollowingHealthBar(sf::Vector2f(-75, -200));
 }
 
 void Player::Move(float x, float y) {
