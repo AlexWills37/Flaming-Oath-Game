@@ -28,7 +28,7 @@ Level * LoadStory1(sf::RenderWindow * window) {
     
     Dialogue * dialogueSystem = new Dialogue(window);
     std::vector<TextObject*> dialogue = {
-        new TextObject("Villager", "You there! Please save us! You are our only hope!"),
+        new TextObject("???", ""),
         new TextObject("Villager", "Why... Why.. are the dragons attacking...")
     };
     dialogueSystem->InitializeDialogue(dialogue);
@@ -36,6 +36,8 @@ Level * LoadStory1(sf::RenderWindow * window) {
 
     return level;
 }
+
+
 
 int main()
 {
@@ -74,17 +76,7 @@ int main()
     {
         std::cout << "ERROR" << std::endl;
     }
-    //music.play();
-    sf::SoundBuffer firesou;
-    
-    if (!firesou.loadFromFile("./assets/music/fre spit.wav"))
-    {
-        std::cout<< "ERROR" << std::endl;
-    }
-
-    sf::Sound fsound;
-    fsound.setBuffer(firesou);
-    //fsound.play();
+    music.play();
 
     // Set up health bar
     sf::Texture emptyHearts;
@@ -95,15 +87,11 @@ int main()
 
 
     // Set up Player
-    sf::Texture playerTexture, fireTexture1;
+    sf::Texture playerTexture;
+    sf::Texture spellTexture;
+    spellTexture.loadFromFile("./assets/sprites/wizard-fire.png");
     playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
-
-    fireTexture1.loadFromFile("./assets/sprites/wizard-fire.png");
-    //healtexture.loadFromFile("./assets/sprites/3/1.png");
-    Player wizard = Player(&window, &playerTexture, &fireTexture1);
-    std::cout << "Starting score: " << wizard.GetScore() << std::endl;
-    bool movingLeft = false;
-    bool movingRight = false;
+    Player wizard = Player(&window, &playerTexture, &playerHealth, &spellTexture);
 
 
     // Create dragon
@@ -111,15 +99,7 @@ int main()
     sf::Texture dragonTexture, fireTexture;
     dragonTexture.loadFromFile("./assets/sprites/0001.png");
     fireTexture.loadFromFile("./assets/sprites/dragon-fire.png");
-
-    Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture);
-
-    // Create dragon 2
-    sf::Texture dragonTexture2, fireTexture2;
-    dragonTexture2.loadFromFile("./assets/sprites/0002.png");
-    fireTexture2.loadFromFile("./assets/sprites/dragon-fire.png");
-    Dragon dragon2 = Dragon(&window, &dragonTexture2, &fireTexture2);
-
+    Dragon dragon = Dragon(&window, &dragonTexture, &fireTexture, &wizard, &dragonHealth);
 
     // Create pause screen
     sf::Texture pauseTexture;
@@ -162,13 +142,6 @@ int main()
         {
             // When it is time for a frame, "do" the frame and reset the clock for the next frame
             Time::GetInstance()->ResetTime();
-           /*  else if (event.key.code == sf::Keyboard::J) {
-                    wizard.ShootFire();
-                }
-                else if (event.key.code == sf::Keyboard::K) {
-                    wizard.ShootFire();
-                } */
-
 
 
             window.clear();
@@ -180,7 +153,6 @@ int main()
             // intro->DrawSprites();
 
             // Render the frame
-
             // // ******** Draw the frame here ********
             // // **---------------------------------**
             // window.draw(spaceBackground);
@@ -190,7 +162,6 @@ int main()
             // playerHealth.Draw();
             // // **---------------------------------**
             // // *************************************
-
             window.display();
 
 

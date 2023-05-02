@@ -13,7 +13,7 @@
 #include <iostream>
 
 // FIX ADD FIRE TEXTURE
-Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * healthBar)
+Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * healthBar, sf::Texture * fireTexture1)
     : LivingEntity(window, texture, 300, 1000, healthBar) {
     // Set the origin to the middle of the sprite's feet
     sprite.setOrigin(38, 132);
@@ -22,14 +22,14 @@ Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * hea
 
 
     // Initialize spells
-    for (int i = 0; i < Player::maxFires1; ++i)
+    for (int i = 0; i < Player::maxSpells; ++i)
     {
-        this->fires1[i] = WizardSpells(this->window, fireTexture1);
+        this->spells[i] = WizardSpells(this->window, fireTexture1);
     }
     
     /*
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)){
-        this->ShootFire();
+        this->CastSpell();
     } 
     // Set initial score and health
     */
@@ -52,18 +52,18 @@ void Player::Move(float x, float y) {
     // Move player
     Entity::Move(x, y);
 }
-void Player::ShootFire()
+void Player::CastSpell()
 {
     // Find the first fire that is off screen and put it where the dragon is
     
     WizardSpells* newFire1 = nullptr;
     //DragonFire * firesound = nullptr;
     bool foundFire1 = false;
-    for (int i = 0; i < Player::maxFires1 && !foundFire1; ++i)
+    for (int i = 0; i < Player::maxSpells && !foundFire1; ++i)
     {
         // If fire is off screen, we can use it as a new fire
-        if (this->fires1[i].offScreen1) {
-            newFire1 = &(this->fires1[i]);
+        if (this->spells[i].offScreen1) {
+            newFire1 = &(this->spells[i]);
             foundFire1 = true;
         }
     }
@@ -75,22 +75,22 @@ void Player::ShootFire()
     //delete buffer1;
 
     // If we did not find a fire, then there are currently this->maxFires fires on screen, so we will not spit fire.
-}
+    }
 };
 
-void Player::Draw1()
+void Player::Draw()
 {
     // Draw the fires first
-    for (int i = 0; i < this->maxFires1; ++i)
+    for (int i = 0; i < this->maxSpells; ++i)
     {
-        if (!this->fires1[i].offScreen1)  // Only draw fires that are on screen
+        if (!this->spells[i].offScreen1)  // Only draw fires that are on screen
         {
-            this->fires1[i].Draw();
+            this->spells[i].Draw();
         }
     }
     
-    // Draw the dragon last, so that it is on top of any fire
-    //Entity::Draw();
+    // Draw the player and health last, so that it is on top of any fire
+    LivingEntity::Draw();
 }
 
 int Player::GetScore() {
@@ -119,13 +119,13 @@ bool Player::CheckCollision1(Dragon * player1)
     //hitsound->setBuffer(*buffer2);
     bool hit1 = false;
     int draghealth = 0;
-    for (int i = 0; i < this->maxFires1; i++)
+    for (int i = 0; i < this->maxSpells; i++)
     {
         // Detect a collision
-        if (!(this->fires1[i].offScreen1) && this->fires1[i].getGlobalBounds().intersects(Dragon->getGlobalBounds()))
+        if (!(this->spells[i].offScreen1) && this->spells[i].getGlobalBounds().intersects(Dragon->getGlobalBounds()))
         {
             hit1 = true;
-            this->fires1[i].offScreen1 = true;
+            this->spells[i].offScreen1 = true;
             //hitsound->play();
             //delete hitsound;
             //delete buffer2;
@@ -149,6 +149,7 @@ void Player::Update() {
 
     
     // Handle user inputs
+    // Movement
     if (input->IsKeyPressed(sf::Keyboard::A)) {
         movingLeft = true;
     } else {
@@ -161,6 +162,15 @@ void Player::Update() {
         movingRight = false;
     }
 
+    // Casting spells
+    if (input->IsKeyPressed(sf::Keyboard::J)) {
+        this->CastSpell();
+    }
+
+    // Move all spells up
+
+
+    // Move player
     if (movingLeft && !movingRight)
     {
         this->Move(-speed * deltaTime, 0);

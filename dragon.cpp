@@ -138,7 +138,7 @@ void Dragon::SpitFire()
     //delete buffer1;
 
     // If we did not find a fire, then there are currently this->maxFires fires on screen, so we will not spit fire.
-}
+    }
 }
 
 /*
