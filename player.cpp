@@ -33,6 +33,7 @@ Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * hea
     } 
     // Set initial score and health
     */
+   
 
     score = 10;
     frameCounter = 0;
@@ -168,6 +169,12 @@ void Player::Update() {
     }
 
     // Move all spells up
+    for (int i = 0; i < Player::maxSpells; i++) {
+        if (!this->spells[i].offScreen1) {
+            this->spells[i].MoveUp();
+        }
+    }
+ 
 
 
     // Move player

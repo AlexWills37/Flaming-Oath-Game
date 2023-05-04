@@ -27,7 +27,7 @@ WizardSpells::WizardSpells()
 void WizardSpells::MoveUp()
 {
     sprite.move(0, -10);
-    if (sprite.getPosition().y > 0) {
+    if (sprite.getPosition().y < 0) {
         offScreen1 = true;
     }
 }

@@ -131,7 +131,7 @@ int main()
 
     float test = 0;
     int test2 = 0;
-
+    
     std::cout << "! Game loaded." << std::endl;
     // Keep window open
     while (window.isOpen())
@@ -145,6 +145,7 @@ int main()
 
 
             window.clear();
+            wizard.Draw();
             easyFightLevel.HandleInputs();
             easyFightLevel.UpdateEntities();
             easyFightLevel.DrawSprites();
@@ -157,7 +158,6 @@ int main()
             // // **---------------------------------**
             // window.draw(spaceBackground);
             // window.draw(text);
-            // wizard.Draw();
             // dragon.Draw();
             // playerHealth.Draw();
             // // **---------------------------------**
