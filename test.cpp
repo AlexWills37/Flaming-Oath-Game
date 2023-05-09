@@ -89,9 +89,11 @@ int main()
     // Set up Player
     sf::Texture playerTexture;
     sf::Texture spellTexture;
+    sf::Texture healTexture;
     spellTexture.loadFromFile("./assets/sprites/wizard-fire.png");
+    healTexture.loadFromFile("./assets/sprites/3/1.png");
     playerTexture.loadFromFile("./assets/sprites/WizardSprite.png");
-    Player wizard = Player(&window, &playerTexture, &playerHealth, &spellTexture);
+    Player wizard = Player(&window, &playerTexture, &playerHealth, &spellTexture, &healTexture);
 
 
     // Create dragon
@@ -129,9 +131,8 @@ int main()
 
     Level* intro = LoadStory1(&window);
 
-    float test = 0;
-    int test2 = 0;
-    
+    int draghealth = 5;
+
     std::cout << "! Game loaded." << std::endl;
     // Keep window open
     while (window.isOpen())
@@ -142,10 +143,33 @@ int main()
         {
             // When it is time for a frame, "do" the frame and reset the clock for the next frame
             Time::GetInstance()->ResetTime();
-
+            //Test collision for fire spel;
+            for (int i = 0; i < wizard.maxSpells; i++){
+                if (!(wizard.spells[i].offScreen1) && wizard.spells[i].getGlobalBounds().intersects(dragon.getGlobalBounds()))
+                {
+                    draghealth = draghealth - 1;
+                    dragon.ChangeHealth(-1);
+                    wizard.spells[i].offScreen1 = true;
+                    //std::cout<< "Collision\n";
+                    //std::cout<< "Dragon Health: "<< draghealth<<std::endl;
+                }
+            }
+            //Test collitison for heal spell
+            for (int i = 0; i < wizard.maxSpells; i++){
+                if (!(wizard.spells2[i].offScreen1) && wizard.spells2[i].getGlobalBounds().intersects(dragon.getGlobalBounds()))
+                {
+                    draghealth = draghealth - 1;
+                    wizard.ChangeHealth(1);
+                    dragon.ChangeHealth(-1);
+                    wizard.spells2[i].offScreen1 = true;
+                    //std::cout<< "Collision\n";
+                    //std::cout<< "Dragon Health: "<< draghealth<<std::endl;
+                }
+            }
 
             window.clear();
             wizard.Draw();
+    
             easyFightLevel.HandleInputs();
             easyFightLevel.UpdateEntities();
             easyFightLevel.DrawSprites();
@@ -166,7 +190,7 @@ int main()
 
 
             // See if the game is over
-            if (wizard.GetHealth() <= 0)
+            if (wizard.GetHealth() <= 0 || draghealth <= 0)
             {
                 window.close();
             }

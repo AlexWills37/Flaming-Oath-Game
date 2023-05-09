@@ -51,6 +51,14 @@ void Dragon::Update()
             Entity::Move(-7, 0);
             movementCounter++;
             break;
+        case Movement::DOWN:
+            Entity::Move(1,-7);
+            movementCounter++;
+            break;
+        case Movement::UP:
+            Entity::Move(-1,7);
+            movementCounter++;
+            break;
         case Movement::NONE:
 
             movementCounter++;
@@ -64,7 +72,7 @@ void Dragon::Update()
     // After acting for 30 frames, choose a new action to take
     if (movementCounter > 30)
     {
-        int random = rand() % 3;
+        int random = rand() % 5;
         switch (random)
         {
             case 0:
@@ -73,7 +81,13 @@ void Dragon::Update()
             case 1:
                 currentMovement = Movement::LEFT;
                 break;
-            case 2:
+            case 3:
+                currentMovement = Movement::UP;
+                break;
+            case 4:
+                currentMovement = Movement::DOWN;
+                break;
+            case 5:
                 currentMovement = Movement::NONE;
                 break;
             default:

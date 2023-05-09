@@ -13,20 +13,41 @@
 #include <iostream>
 
 // FIX ADD FIRE TEXTURE
-Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * healthBar, sf::Texture * fireTexture1)
+Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * healthBar, sf::Texture * fireTexture1, sf::Texture * healSpell)
     : LivingEntity(window, texture, 300, 1000, healthBar) {
     // Set the origin to the middle of the sprite's feet
     sprite.setOrigin(38, 132);
+    InputManager* input = InputManager::GetInputManager();
+
 
     // Set initial score and speed
 
 
     // Initialize spells
+    /*
     for (int i = 0; i < Player::maxSpells; ++i)
     {
         this->spells[i] = WizardSpells(this->window, fireTexture1);
+        
+    }
+    */
+    if (CastSpell(), true) {
+        std::cout<< "fire";
+        for (int i = 0; i < Player::maxSpells; ++i)
+    {
+        this->spells[i] = WizardSpells(this->window, fireTexture1);
+    }
+    }
+    if (CastHeal(), true) {
+        std::cout<< "heal";
+        for (int i = 0; i < Player::maxSpells2; ++i)
+    {
+        this->spells2[i] = WizardSpells(this->window, healSpell);
+    }    
     }
     
+
+
     /*
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)){
         this->CastSpell();
@@ -37,6 +58,7 @@ Player::Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * hea
 
     score = 10;
     frameCounter = 0;
+    counter = 0;
     speed = 850;
     this->EnableFollowingHealthBar(sf::Vector2f(-75, -200));
 }
@@ -79,6 +101,32 @@ void Player::CastSpell()
     }
 };
 
+void Player:: CastHeal()
+{
+    // Find the first fire that is off screen and put it where the dragon is
+    
+    WizardSpells* newHeal = nullptr;
+    //DragonFire * firesound = nullptr;
+    bool foundHeal = false;
+    for (int i = 0; i < Player::maxSpells2 && !foundHeal; ++i)
+    {
+        // If fire is off screen, we can use it as a new fire
+        if (this->spells2[i].offScreen1) {
+            newHeal = &(this->spells2[i]);
+            foundHeal = true;
+        }
+    }
+    // If we found a fire that is off screen, we can have the dragon spit it out (move it to the dragon)
+    if (foundHeal) {
+        newHeal->offScreen1 = false;
+        newHeal->sprite.setPosition(this->sprite.getPosition());    // Set the fire to the dragon's current position
+    //delete firesound;
+    //delete buffer1;
+
+    // If we did not find a fire, then there are currently this->maxFires fires on screen, so we will not spit fire.
+    }
+}
+
 void Player::Draw()
 {
     // Draw the fires first
@@ -87,6 +135,12 @@ void Player::Draw()
         if (!this->spells[i].offScreen1)  // Only draw fires that are on screen
         {
             this->spells[i].Draw();
+        }
+    }
+    for (int i = 0; i < this->maxSpells2; ++i) {
+    if (!this->spells2[i].offScreen1)
+        {
+            this->spells2[i].Draw();           
         }
     }
     
@@ -98,16 +152,27 @@ int Player::GetScore() {
     return this->score;
 }
 
-void Player::FrameUpdate() {
+int Player::FrameUpdate() {
     frameCounter++;
-
-    // Every 60 frames, increase the score by 1
-    if (frameCounter >= 60) {
-        this->score++;
-        frameCounter = 0;
-    }
-
+return frameCounter;
 }
+/*
+bool Player::CheckCollision1() {
+    int dragonhealth = 5;
+    bool hit = false;
+    for (int i = 0; i < this->maxSpells; i++){
+        if (!(this->spells[i].offScreen1) && this->spells[i].getGlobalBounds().intersects(dragon.getGlobalBounds()))
+        {
+            dragonhealth = dragonhealth - 1;
+            this->spells[i].offScreen1 = true;
+            std::cout<< "Collision";
+            std::cout<< "Dragon Health: "<< dragonhealth;
+        }
+    }
+    return hit;
+}
+*/
+
 /*
 bool Player::CheckCollision1(Dragon * player1)
 {
@@ -148,7 +213,6 @@ void Player::Update() {
     InputManager* input = InputManager::GetInputManager();
     bool movingLeft, movingRight;
 
-    
     // Handle user inputs
     // Movement
     if (input->IsKeyPressed(sf::Keyboard::A)) {
@@ -164,8 +228,11 @@ void Player::Update() {
     }
 
     // Casting spells
-    if (input->IsKeyPressed(sf::Keyboard::J)) {
+    if ((FrameUpdate() % 10 == 0) && input->IsKeyPressed(sf::Keyboard::J)) {
         this->CastSpell();
+    }
+    if (input->IsKeyPressed(sf::Keyboard::K)) {
+        this->CastHeal();
     }
 
     // Move all spells up
@@ -174,6 +241,12 @@ void Player::Update() {
             this->spells[i].MoveUp();
         }
     }
+    for (int i = 0; i < Player::maxSpells2; i++) {
+        if (!this->spells2[i].offScreen1) {
+            this->spells2[i].MoveUp();
+        }
+    }
+
  
 
 
@@ -184,6 +257,5 @@ void Player::Update() {
     } else if (movingRight && !movingLeft) {
         this->Move(speed * deltaTime, 0);
     }
-
 
 }

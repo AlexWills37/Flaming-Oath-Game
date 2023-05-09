@@ -51,7 +51,7 @@ class Player: public LivingEntity {
 
         //Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar * health);
 
-        Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar* healthBar, sf::Texture * fireTexture1);
+        Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar* healthBar, sf::Texture * fireTexture1, sf::Texture * healSpell);
 
 
         /*
@@ -70,14 +70,17 @@ class Player: public LivingEntity {
         */
         void CastSpell();
 
+        void CastHeal();
 
         void Draw();
+
+        //bool CheckCollision1();
 
         /*
          * Update's the player's state (score, collision, etc.).
          * Call this method every frame.
          */
-        void FrameUpdate();
+        int FrameUpdate();
 
 
         // void ChangeHealth(int change);
@@ -85,18 +88,19 @@ class Player: public LivingEntity {
 
         void DecreaseScore(int change);
 
-
         void Update();  
 
-    private:
+   // private:
         int frameCounter;   // A counter to increase the player's score over time
+        int counter;
         int score;          // The player's score
         float speed;
 
-        //bool CheckCollission1(Dragon * dragon);
 
-        static const int maxSpells = 10;  // How many fires can be on screen at once      
+        static const int maxSpells = 5;  // How many fires can be on screen at once      
+        static const int maxSpells2 = 1;
         WizardSpells spells[maxSpells];  // A list of the DragonFire objects that belong to this dragon.
+        WizardSpells spells2[maxSpells];  // A list of the DragonFire objects that belong to this dragon.
         //Movement currentMovement;
         //int movementCounter;
 

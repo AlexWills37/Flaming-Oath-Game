@@ -50,7 +50,7 @@ class DragonFire: private Entity {  // Since this is private, only DragonFire an
 class Player;
 
 enum class Movement {
-    NONE, LEFT, RIGHT
+    NONE, LEFT, RIGHT, UP, DOWN
 };
 
 /*
