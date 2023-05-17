@@ -18,7 +18,7 @@ Then run the file `./a.out` to run the game.
 #### Overview
 `Mouse` - use the mouse to click buttons on the menus (title screen, game over, pause, and victory screen)
 
-`Escape` - pause the game at any Time
+`Escape` - pause the game at any time
 
 `Space` - progress dialogue (unless the dialogue tells you to press a different button)
 
