@@ -104,6 +104,65 @@ Level * LoadStory1(sf::RenderWindow * window) {
 }
 
 /*
+ * Builds the second story level with dialogue.
+ *
+ * @param window - a pointer to the window of the game
+ * @return (Level*) - a pointer to the first story level
+ */
+Level * LoadStory2(sf::RenderWindow * window) {
+    
+    Level * level = new Level();
+
+    // Set up dialogue system
+    sf::Texture * dialogueBox = new sf::Texture();
+    dialogueBox->loadFromFile("./assets/sprites/dialogue_box.png");
+
+    Dialogue * dialogueSystem = new Dialogue(window, dialogueBox, level);
+    // https://ansimuz.itch.io/country-side-platfformer?download
+    std::vector<TextObject*> dialogue = {
+
+        (new TextObject("Villager", "Woah... Ha ha! You did it! You actually did it!!"))
+            ->ChangeBackground("./assets/sprites/forestBG.png"),
+        (new TextObject("Player", "Heh, I guess you're right! I could get used to this whole magic thing.")),
+        (new TextObject("Villager", "How do you feel?")),
+        (new TextObject("Player", "I feel great! *cough*")),
+        (new TextObject("Player", "Okay... maybe I am a bit injured.")),
+        (new TextObject("Villager", "You can probably use healing magic, now that you've gained some fighting experience.")),
+        (new TextObject("Player", "There is HEALING MAGIC? Why didn't you tell me sooner?")),
+        (new TextObject("Villager", "I'm sorry! If you recall, there was a DRAGON coming towards us?")),
+        (new TextObject("Player", "...")),
+        (new TextObject("Player", "Alright, I forgive you, I guess. So how do I use healing magic? Is it another button I have to press?")),
+        (new TextObject("Villager", "Verily. It's like you know my thoughts exactly. Try pressing \"K\"."))
+            ->RequireAction(sf::Keyboard::K),
+        (new TextObject("Player", "What is this???")),
+        (new TextObject("Villager", "Ah yes---I forget, you know nothing of magic. You cannot just heal out of thin air. In order to heal, you must steal.")),
+        (new TextObject("Villager", "When your healing spell hits an enemy, it will drain some of their life and bring it to you.")),
+        (new TextObject("Player", "That seems... scary...")),
+        (new TextObject("Villager", "Think of it this way: you damage the dragons, AND you heal yourself. It's a win-win!")),
+        (new TextObject("Player", "Watch out!! Another dragon is coming!")),
+        (new TextObject("Villager", "Don't give up! And remember to heal yourself!"))
+        
+    };
+    dialogueSystem->InitializeDialogue(dialogue);
+
+    // Add avatars for the characters
+    sf::Texture * villagerTexture = new sf::Texture();
+    sf::Texture * playerTexture = new sf::Texture();
+    playerTexture->loadFromFile("./assets/sprites/avatar_wizard.png");
+    villagerTexture->loadFromFile("./assets/sprites/avatar_villager.png");
+    dialogueSystem->AddAvatar("Villager", villagerTexture);
+    dialogueSystem->AddAvatar("Player", playerTexture);
+
+    // Add assets to the level
+    level->AddEntity(dialogueSystem); 
+
+    // Add music
+    level->AddBackgroundMusic("./assets/music/Voices From Earth.ogg");
+
+    return level;
+}
+
+/*
  * Builds the first dragon fight level.
  * 
  * @param window - pointer to the game's window
@@ -409,6 +468,10 @@ int main()
                             break;
                         case 2:
                             currentLevel = LoadDragonFight1(&window);
+                            break;
+                        
+                        case 3:
+                            currentLevel = LoadStory2(&window);
                             break;
 
                         default:
