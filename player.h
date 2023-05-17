@@ -12,6 +12,8 @@
 #include <SFML/Graphics.hpp>
 #include "LivingEntity.h"
 #include "dragon.h"
+#include "Level.h"
+#pragma once
 /*
  * WizardSpells represents the fire that a dragon breaths to attack the player.
  */
@@ -40,6 +42,7 @@ class WizardSpells: public Entity {  // Since this is private, only WizardSpells
         // const int textureWidth = 46;
         // const int textureHeight = 163;
 };
+class Dragon;
 
 class Player: public LivingEntity {
 
@@ -53,7 +56,7 @@ class Player: public LivingEntity {
 
         Player(sf::RenderWindow * window, sf::Texture * texture, HealthBar* healthBar, sf::Texture * fireTexture1, sf::Texture * healSpell);
 
-
+        void setDragon(Dragon * dragon);
         /*
          * Moves the player.
          */
@@ -74,7 +77,9 @@ class Player: public LivingEntity {
 
         void Draw();
 
-        //bool CheckCollision1();
+        void SetLevel(Level * level) {
+            this->level = level;
+        }
 
         /*
          * Update's the player's state (score, collision, etc.).
@@ -88,22 +93,23 @@ class Player: public LivingEntity {
 
         void DecreaseScore(int change);
 
+
         void Update();  
 
-   // private:
-        int frameCounter;   // A counter to increase the player's score over time
-        int counter;
+    private:
+        int frameCounter;
+        int counter;   // A counter to increase the player's score over time
         int score;          // The player's score
         float speed;
 
+        //bool CheckCollission1(Dragon * dragon);
 
         static const int maxSpells = 5;  // How many fires can be on screen at once      
         static const int maxSpells2 = 1;
         WizardSpells spells[maxSpells];  // A list of the DragonFire objects that belong to this dragon.
-        WizardSpells spells2[maxSpells];  // A list of the DragonFire objects that belong to this dragon.
-        //Movement currentMovement;
-        //int movementCounter;
-
+        WizardSpells spells2[maxSpells];
+        Dragon * dragon;
+        Level* level;
 
 };
 

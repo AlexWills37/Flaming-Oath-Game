@@ -82,7 +82,6 @@ void Entity::Draw()
     window->draw(sprite);
 }
 
-
 sf::FloatRect Entity::getGlobalBounds()
 {
     return this->sprite.getGlobalBounds();

@@ -3,6 +3,7 @@
  * Defines the Dragon and the DragonFire classes.
  * 
  * @author Alex Wills
+ * @author Jhonder Abreus
  * @date April 7, 2023
  */
 #ifndef _DRAGON_H
@@ -12,6 +13,7 @@
 #include <SFML/Audio.hpp>
 #include "entity.h"
 #include "player.h"
+//#pragma once
 
 /*
  * DragonFire represents the fire that a dragon breaths to attack the player.
@@ -42,15 +44,13 @@ class DragonFire: private Entity {  // Since this is private, only DragonFire an
     private:
         bool offScreen; // If this is true, the sprite is off screen and we can re-use it
 
-        // const int textureWidth = 46;
-        // const int textureHeight = 163;
 
 };
 
 class Player;
 
 enum class Movement {
-    NONE, LEFT, RIGHT, UP, DOWN
+    NONE, LEFT, RIGHT, UP, DOWN,
 };
 
 /*
@@ -70,6 +70,9 @@ class Dragon: public LivingEntity {
          * Moves the dragon randomly.
          */
         void Update();
+
+        void Update(int moveCounter = 10, int maxFires = 10, int randFires = 10);
+
 
         /*
          * Create a DragonFire and send it towards the player.

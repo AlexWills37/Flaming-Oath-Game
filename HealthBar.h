@@ -1,6 +1,6 @@
 /* HealthBar.h
  *
- * A sprite representation of a character's health.
+ * An entity representation of a character's health.
  * 
  * @author Alex Wills
  */
@@ -14,18 +14,25 @@ class HealthBar: public Entity {
 
     // Member variables
     private:
-        sf::Texture * emptyHeartTexture;
-        sf::Texture * filledHeartTexture;
-        sf::Sprite backgroundSprite;
+        sf::Texture * emptyHeartTexture;    // The empty health meter
+        sf::Texture * filledHeartTexture;   // The filled health meter
+        sf::Sprite backgroundSprite;    
         sf::Sprite heartsSprite;
 
-        int health;
+        int health; // The number of health points the entity has
 
-        int heartWidth;
+        int heartWidth; // The number of pixels in a single "heart" on the heart meter
 
     // Constructors
     public:
-        HealthBar();
+
+        /*
+         * Constructs a health bar to be used by an entity.
+         *
+         * @param window - the game window
+         * @param emptyHearts - texture of the empty hearts
+         * @param filledHearts - texture of a full heart meter
+         */
         HealthBar(sf::RenderWindow* window, sf::Texture* emptyHearts, sf::Texture* filledHearts);
 
 
@@ -50,13 +57,28 @@ class HealthBar: public Entity {
          */
         void changeHealth(int difference);
 
+        /*
+         * Draws the health bar.
+         */
         void Draw();
 
+        /*
+         * Sets the position of the health bar on the screen.
+         */
         void SetPosition(float x, float y);
 
     // Helper functions
     private:
+        /*
+         * Draws the empty heart meter for the background.
+         */
         void drawBackground();
+
+        /*
+         * Draws the filled hearts.
+         *
+         * @param numHearts - the number of hearts to draw
+         */
         void drawHearts(int numHearts);
 
 };

@@ -35,6 +35,14 @@ class Entity {
          * @param x, y - the starting coordinates for the Entity
          */
         Entity(sf::RenderWindow * window, sf::Texture * texture, float x, float y);
+
+        /*
+         * Construct an entity.
+         * @param window - a pointer to the RenderWindow to draw this entity to
+         * @param texture - a pointer to the texture this entity will use
+         *      (the texture object itself must stay in-scope, so create the textures before the 
+         *       main game loop, and pass in pointers to the Entities)
+         */
         Entity(sf::RenderWindow * window, sf::Texture * texture);
         Entity();
 
@@ -44,15 +52,20 @@ class Entity {
         void Move(float deltaX, float deltaY);
 
         /*
-         * Update the sprite's state
+         * Updates the sprite's state
          */
         virtual void Update() {}
+        
+        virtual void Update(int moveCounter, int maxFires, int randFires) {}
 
         /*
-         * Draw this entity's sprite(s) to the screen.
+         * Draws this entity's sprite(s) to the screen.
          */
         virtual void Draw();
 
+        /*
+         * Returns the global bounds of this entity's sprite.
+         */
         sf::FloatRect getGlobalBounds();
 
         /*
@@ -60,9 +73,8 @@ class Entity {
          */
         void SetPosition(float x, float y);
 
+    // These variables can be accessed by children classes
     protected:
-
-        // These variables can be accessed by children classes
         sf::Sprite sprite;
         sf::Texture * texture;
         sf::RenderWindow * window;

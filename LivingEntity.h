@@ -15,21 +15,31 @@ class LivingEntity: public Entity {
     // This class contains everything from the Entity class.
     // Member variables
     private:
-        HealthBar* healthBar;
 
+        /*
+         * Enum for the behavior of the health bar. 
+         *  FIXED - health bar stays at the same screen location, regardless of entity location
+         *  FOLLOW - the healthbar follows the entity's location at a fixed offset
+         */
         enum HealthBarLocation {
             FIXED, FOLLOW
         };
 
+        HealthBar* healthBar;   // The entity's health bar
         HealthBarLocation healthMovement;   // Where the health bar should be drawn
         sf::Vector2f healthbarOffset;   // If the health bar should follow the player, where should it be (relatively)
 
     // Constructor
     public:
+
         /*
-         * Default constructor. Initialize everything to null.
+         * Constructs an entity that has health and a health bar.
+         *
+         * @param window - the window of the game
+         * @param texture - the entity's main texture
+         * @param x, y - the starting location of the entity
+         * @param healthBar - pointer to the unique health bar this entity will use
          */
-        LivingEntity();
         LivingEntity(sf::RenderWindow * window, sf::Texture * texture, float x,
             float y, HealthBar * healthBar);
 
@@ -61,7 +71,5 @@ class LivingEntity: public Entity {
         void EnableFollowingHealthBar(sf::Vector2f offset);
 
 };
-
-
 
 #endif
