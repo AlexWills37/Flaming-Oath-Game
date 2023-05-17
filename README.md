@@ -4,6 +4,10 @@ In this game, you play as a powerful wizard who is just starting
 to learn how to use their magic. You job is to defend a village from evil dragons,
 who have suddenly started to attack after 1000 years of peace.
 
+## Trailer
+[![Trailer video](assets/sprites/title.png)Link to the trailer video](https://www.youtube.com/watch?v=5MXwiNZBJyA)
+
+[Link to a full gameplay video](https://youtu.be/P28g4eQVHQg)
 
 
 ## Usage
@@ -40,7 +44,7 @@ Use 'J' to launch fireballs upwards towards the dragon to fight back! If you def
 - [Dragon Sprites from MasuOne on itch.io](https://masuone.itch.io/dragons-pack-free)
 - [Fire Sprites from BowchersPrincipal](https://www.deviantart.com/bowchersprincipal/art/kirby-Dragon-fire-sprite-sheet-767796025)
 - [Heal Spell Sprite by ansimuz on itch.io](https://ansimuz.itch.io/gothicvania-magic-pack-9)
-- [Start Background by aamatniekss on itch.io](https://aamatniekss.itch.io/sci-fi-space-background-set)
+- [Star Background by aamatniekss on itch.io](https://aamatniekss.itch.io/sci-fi-space-background-set)
   > This asset is not free, but I got it as part of a bundle last year and did not just buy it for this project :)
 - Dialogue boxes, heart meters, villager sprite made by Alex
 
@@ -69,3 +73,6 @@ Use 'J' to launch fireballs upwards towards the dragon to fight back! If you def
 - [Using `std::vector`s to create lists of varying size](https://www.geeksforgeeks.org/vector-in-cpp-stl/)
 - [Using the `new` keyword to create pointers to objects that will not fall out of scope](https://stackoverflow.com/questions/655065/when-should-i-use-the-new-keyword-in-c)
 - [Implementing the singleton pattern in C++ to have globally accessible classes (like Time)](https://refactoring.guru/design-patterns/singleton/cpp/example)
+
+
+This game was made with SFML and C++ for Professor Roy's 2D Game Development with C++ class! Thank you Professor Roy for a great class and a fun semester!
