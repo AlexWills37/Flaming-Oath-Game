@@ -2,4 +2,7 @@
 # output files
 *.out
 *.o
-hollow_knight.ogg
+*.kra
+*~
+**/.vscode
+**./logs

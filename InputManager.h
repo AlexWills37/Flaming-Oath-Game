@@ -1,6 +1,39 @@
 /* InputManager.h
  *
- * Interface for all of the input
+ * Interface for all of the input in the game.
+ * To use:
+ *  (FIRST TIME IN CODE, SETTING UP THE MANAGER)
+ *      - Get a reference to the InputManager object with:
+ *          InputManager* input = InpnutManager::GetInputManager();
+ * 
+ *      - Connect the input manager to the graphics window with:
+ *          input->SetGraphicsWindow( <pointer to sf::RenderWindow> );
+ * 
+ *      NOTE: You only have to set up the graphics window once in the program. Do this before the
+ *      main gameplay loop.
+ * 
+ *  (ONCE PER FRAME, UPDATING THE INPUT STATES)
+ *      - Get a reference to the InputManager object with:
+ *          InputManager* input = InpnutManager::GetInputManager();
+ * 
+ *      - Update the input one time every frame with:
+ *          input->UpdateInput();
+ * 
+ *  (ANYWHERE IN CODE, ACCESSING THE INPUT STATES)
+ *      - Get a reference to the InputManager object with:
+ *          InputManager* input = InpnutManager::GetInputManager();
+ *      
+ *      - Access whether or not a key is pressed down with:
+ *          input->IsKeyPressed(sf::Keyboard::Key key)
+ *      
+ *      - Access whether or not the left mouse button is pressed down with:
+ *          input->IsMousePressed();
+ * 
+ *      - Get the current position of the mouse in the window with:
+ *          input->GetMousePosition();
+ * 
+ * 
+ * @author ALex Wills
  */
 
 #ifndef _INPUTMANAGER_H
@@ -51,7 +84,7 @@ class InputManager {
         void UpdateInput();
 
         /*
-         * Returns the state of a keyboard, if it is pressed (true) or unpressed (false).
+         * Returns the state of a keyboard key, if it is pressed (true) or unpressed (false).
          */
         bool IsKeyPressed(sf::Keyboard::Key key);
 

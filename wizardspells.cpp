@@ -2,7 +2,6 @@
  * 
  * Implementation of the WizardSpells class.
  * 
- * @author Alex Wills
  * @date April 7, 2023
  */
 #include "player.h"

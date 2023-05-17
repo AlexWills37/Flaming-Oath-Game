@@ -3,6 +3,7 @@
  * Implementations for the Dragon class.
  * 
  * @author Alex Wills
+ * @author Jhonder Abreus
  * @date April 7, 2023
  */
 #include "dragon.h"
@@ -51,12 +52,12 @@ void Dragon::Update()
             Entity::Move(-7, 0);
             movementCounter++;
             break;
-        case Movement::DOWN:
-            Entity::Move(1,-7);
+        case Movement:: DOWN:
+            Entity::Move(1,-1);
             movementCounter++;
             break;
         case Movement::UP:
-            Entity::Move(-1,7);
+            Entity:Move(-1,1);
             movementCounter++;
             break;
         case Movement::NONE:
@@ -81,13 +82,99 @@ void Dragon::Update()
             case 1:
                 currentMovement = Movement::LEFT;
                 break;
+            case 2:
+                currentMovement = Movement::UP;
+                break;
+            case 3:
+                currentMovement = Movement::DOWN;
+                break;
+            case 4:
+                currentMovement = Movement::NONE;
+            default:
+                break;
+        }
+
+        movementCounter = 0;
+    }
+
+
+
+    // Randomly spit fire
+    int random = rand() % 60;
+    switch (random) 
+    {
+        // Spit fire!
+        case 0:
+            this->SpitFire();
+            break;
+        default:
+            break;
+    }
+
+    // Move all on-screen fires down
+    for (int i = 0; i < Dragon::maxFires; i++) {
+        if (!fires[i].offScreen) {
+            fires[i].MoveDown();
+        }
+    }
+
+    // Check for collisions
+    this->CheckCollision(player);
+}
+
+/*
+*Overloaded function to make dragons have different stats
+*/
+void Dragon::Update(int moveCounter, int maxFires, int randFire)
+{
+    // Move based on current action    
+    switch (currentMovement)
+    {
+        case Movement::RIGHT:
+            Entity::Move(7, 0);
+            movementCounter++;
+            break;
+        case Movement::LEFT:
+            Entity::Move(-7, 0);
+            movementCounter++;
+            break;
+        case Movement::DOWN:
+            Entity::Move(1,-1);
+            moveCounter++;
+            break;
+        case Movement::UP:
+            Entity::Move(-1,1);
+            moveCounter++;
+            break;
+        case Movement::NONE:
+
+            movementCounter++;
+
+            break;
+        default: 
+            break;
+        
+    }
+
+    // After acting for 30 frames, choose a new action to take
+    if (movementCounter > moveCounter)
+    {
+        int random = rand() % 5;
+        switch (random)
+        {
+            case 0:
+                currentMovement = Movement::RIGHT;
+                break;
+            case 1:
+                currentMovement = Movement::LEFT;
+                break;
+            case 2:
+                currentMovement = Movement::DOWN;
+                break;
             case 3:
                 currentMovement = Movement::UP;
                 break;
             case 4:
-                currentMovement = Movement::DOWN;
-                break;
-            case 5:
                 currentMovement = Movement::NONE;
                 break;
             default:
@@ -97,18 +184,15 @@ void Dragon::Update()
         movementCounter = 0;
     }
 
-    //setup fire sound effect
 
-    //firespit.loadFromFile("./assets/music/frre spit.wav");
 
     // Randomly spit fire
-    int random = rand() % 60;
+    int random = rand() % randFire;
     switch (random) 
     {
         // Spit fire!
         case 0:
             this->SpitFire();
-            //fsound.play();
             break;
         default:
             break;
@@ -133,7 +217,6 @@ void Dragon::SpitFire()
 {
     // Find the first fire that is off screen and put it where the dragon is
     DragonFire * newFire = nullptr;
-    //DragonFire * firesound = nullptr;
     bool foundFire = false;
     for (int i = 0; i < Dragon::maxFires && !foundFire; ++i)
     {
@@ -148,8 +231,6 @@ void Dragon::SpitFire()
         newFire->offScreen = false;
         newFire->sprite.setPosition(this->sprite.getPosition());    // Set the fire to the dragon's current position
     
-    //delete firesound;
-    //delete buffer1;
 
     // If we did not find a fire, then there are currently this->maxFires fires on screen, so we will not spit fire.
     }
@@ -180,13 +261,6 @@ void Dragon::Draw()
  */
 bool Dragon::CheckCollision(Player * player)
 {
-    sf::SoundBuffer* buffer2 = new sf::SoundBuffer;
-    if (!buffer2->loadFromFile("./assets/music/hit sfx.wav"))
-    {
-        std::cout<< "ERROR LOADING HIT"<<std::endl;
-    }
-    sf::Sound* hitsound = new sf::Sound;
-    hitsound->setBuffer(*buffer2);
     bool hit = false;
 
     for (int i = 0; i < this->maxFires; i++)
@@ -196,9 +270,6 @@ bool Dragon::CheckCollision(Player * player)
         {
             hit = true;
             this->fires[i].offScreen = true;
-            //hitsound->play();
-            //delete hitsound;
-            //delete buffer2;
             player->ChangeHealth(-1);
         }
     }
