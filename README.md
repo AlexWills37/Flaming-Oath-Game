@@ -28,7 +28,7 @@ Then run the file `./a.out` to run the game.
 
 `J` - cast your fire spell
 
-To play the game, use 'A' and 'D' to move left anf right, respectively. Try to avoid the fire! In the beginning of the game, you will see a title screen, and then some 
+To play the game, use 'A' and 'D' to move left and right, respectively. Try to avoid the fire! In the beginning of the game, you will see a title screen, and then some 
 dialogue. Use the mouse to navigate the title screen, and use the space bar to progress 
 diaglogue.
 
